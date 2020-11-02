@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    </head>
+    <body>
+    So luong token: <input type="text" class="money">
+    Dia chi gui den: <input type="text" class="addressTo">
+    <button onclick="triggerSmartContract()">Send</button>
+    <script>
+
+        async function triggerSmartContract() {
+            const trc20ContractAddress = "TLTbkjAQSks94Sj1tRXX1yBTeRT4Qc7w2c";//contract address
+            var address = "TZ6u76fTzpGaE2MwcwzCVGbmxvmPLbSaHv";
+            var addressTo = document.querySelector('.addressTo').value;
+            var money = parseInt(document.querySelector('.money').value);
+            try {
+                let contract = await tronWeb.contract().at(trc20ContractAddress);
+                //Use send to execute a non-pure or modify smart contract method on a given smart contract that modify or change values on the blockchain.
+                // These methods consume resources(bandwidth and energy) to perform as the changes need to be broadcasted out to the network.
+                await contract.transfer(
+                    addressTo, //address _to
+                    money   //amount
+                ).send({
+                    feeLimit: 1000000
+                }).then(output => {console.log('- Output:', output, '\n');});
+            } catch(error) {
+                console.error("trigger smart contract error",error)
+            }
+        }
+
+    </script>
+    </body>
+</html>

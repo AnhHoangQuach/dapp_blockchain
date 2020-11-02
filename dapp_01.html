@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    </head>
+    <body>
+    <button onclick="gettronweb()">Can you get tronweb from tronlink?</button>
+    <button onclick="showBlance()">Get trx</button>
+    <p id="demo"></p>
+    So luong trx: <input type="text" class="money">
+    Dia chi gui den: <input type="text" class="addressTo">
+    <button onclick="sendMoney()">Send</button>
+    <script>
+        function gettronweb(){
+            if(window.tronWeb && window.tronWeb.defaultAddress.base58){
+                document.write("Yes, catch it:",window.tronWeb.defaultAddress.base58) // lay dia chi hien tai cua minh
+            }
+        }
+        function showBlance() {
+            var demo = document.getElementById('demo');
+            tronWeb.trx.getBalance('TZ6u76fTzpGaE2MwcwzCVGbmxvmPLbSaHv') // thay dia chi cua vi vao
+            .then(result => demo.innerHTML = result / Math.pow(10,6));
+        }
+
+        async function sendMoney() {
+            var money = parseInt(document.querySelector('.money').value);
+            var addressTo = document.querySelector('.addressTo').value;
+            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                var tronweb = window.tronWeb
+                var tx = await tronweb.transactionBuilder.sendTrx(addressTo, money, 'TZ6u76fTzpGaE2MwcwzCVGbmxvmPLbSaHv')
+                var signedTx = await tronweb.trx.sign(tx)
+                var broastTx = await tronweb.trx.sendRawTransaction(signedTx)
+            }
+        }
+
+        
+    </script>
+    </body>
+</html>

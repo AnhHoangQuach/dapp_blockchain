@@ -108,21 +108,15 @@ contract Token is ERC20Interface, Owned {
         uint256 amount;
         bool requested;
         uint256 releaseDate;
-    }
-    
-    stakingInfo stk;
-    
-    struct userStake{
-        address account;
-        stakingInfo[] StakeMap; //address dau tien la dia chi cua token, address thu hai la dia chi cua minh msg.sender
         uint256 drawDate;
     }
-    userStake user;
+    
+stakingInfo stk;
   mapping (address => uint256) _balances;
   mapping (address => mapping (address => uint256)) _allowed;
   mapping (address => uint256) private _stake; // tong tien minh stake
-  userStake[] UserMap; // mang chua cac user
-  // This notifies clients about the amount burnt
+  mapping (address => stakingInfo[]) public UserMap; // mang chua cac user
+
   event Burn(address indexed from, uint256 value);
   
   function balanceOf(address _owner) public view returns (uint256 balance) {
@@ -134,30 +128,17 @@ contract Token is ERC20Interface, Owned {
         require(amount <= balanceOf(msg.sender));
         _transfer(msg.sender,address(this), amount);
         _stake[msg.sender] += amount;
-        user.account = msg.sender;
-        user.drawDate = 0;
+        stk.drawDate = 0;
         stk.releaseDate  = now;
         stk.amount = amount;
         stk.requested = true;
-        if(UserMap.length == 0) {
-            user.StakeMap.push(stk);    
-            UserMap.push(user);
-        }
-        for(uint256 i=0;i<UserMap.length;i++) {
-            if(UserMap[i].account != user.account) {
-                UserMap.push(user);
-            } else {
-                UserMap[i].StakeMap.push(stk);    
-            }
-        }
+        UserMap[msg.sender].push(stk);
         return true;
     }
     
     function checkAddressOfArray(address account) public view returns (bool){
-        for(uint256 i=0;i<UserMap.length;i++) {
-            if(UserMap[i].account == account) {
-                return true;
-            }
+        if(UserMap[msg.sender].length > 0) {
+            return true;
         }
         return false;
     }
@@ -171,20 +152,19 @@ contract Token is ERC20Interface, Owned {
     
     function withDraw() public  returns (uint256) {
         uint256 timeStake;
+        uint256 timeNew;
         uint256 sum = 0;
-        for(uint256 j=0;j<UserMap.length;j++)
-        {
-            if(UserMap[j].account == msg.sender){
-                for(uint256 i=0;i<UserMap[j].StakeMap.length;i++) {
-                    timeStake = (now - UserMap[j].StakeMap[i].releaseDate) ;
-                    if(timeStake >= 30){
-                            sum += UserMap[j].StakeMap[i].amount * 1 / 100 * timeStake ;
-                    }
-                    UserMap[j].StakeMap[i].releaseDate = now;
-                }
-                UserMap[j].drawDate = now;
+        uint256 sumNew = 0;
+        uint256 total;
+        for(uint256 i=0;i<UserMap[msg.sender].length;i++) {
+            timeStake = (now - UserMap[msg.sender][i].releaseDate) ;
+            if(timeStake >= 30){
+                sum = UserMap[msg.sender][i].amount * 1 / 100 * timeStake;
             }
+            UserMap[msg.sender][i].releaseDate = now;
+            UserMap[msg.sender][i].drawDate = now;
         }
+         
         _transfer(address(this),msg.sender,sum);
            if(_stake[msg.sender] <= 0 ) {
                 sum = 0;                    
@@ -192,36 +172,29 @@ contract Token is ERC20Interface, Owned {
           return sum;
     }
     
-    function checkDateDraw(address account) public returns (uint256) {
-        for(uint256 i=0;i<UserMap.length;i++)
-        {
-            if(UserMap[i].account==account){
-                return UserMap[i].drawDate;
-            }
-        }
+    function checkDateDraw() public returns (uint256) {
+        return UserMap[msg.sender][UserMap[msg.sender].length].drawDate;
     }
   function unStaking(uint256 amount) public returns (bool) {
       require(amount <= _stake[msg.sender]);
       require(amount >= 0);
       _stake[msg.sender] -= amount;
-      for(uint256 j=0;j< UserMap.length;j++)
+      for(uint256 j=0;j< UserMap[msg.sender].length;j++)
       {
-          if(UserMap[j].account==msg.sender)
-          {
-                for(uint256 i= UserMap[j].StakeMap.length-1; i>=0;i--){
-                     if(amount <= UserMap[j].StakeMap[i].amount) {
-                      UserMap[j].StakeMap[i].amount -= amount;
-                      _transfer(address(this),msg.sender,amount);
-                        return true;
-                      } else {
-                        amount -= UserMap[j].StakeMap[i].amount;
-                        UserMap[j].StakeMap[i].amount = 0;
-                      _stake[msg.sender] -= UserMap[j].StakeMap[i].amount;
-                      _transfer(address(this),msg.sender,amount);
-                          UserMap[j].StakeMap[i].requested = false;
-                      }
-                }
-          }
+        for(uint256 i= UserMap[msg.sender].length-1; i>=0;i--){
+             if(amount <= UserMap[msg.sender][i].amount) {
+              UserMap[msg.sender][i].amount -= amount;
+              _transfer(address(this),msg.sender,amount);
+                return true;
+              } else {
+                amount -= UserMap[msg.sender][i].amount;
+                UserMap[msg.sender][i].amount = 0;
+              _stake[msg.sender] -= UserMap[msg.sender][i].amount;
+              _transfer(address(this),msg.sender,amount);
+                  UserMap[msg.sender][i].requested = false;
+              }
+        }
+          
       }
   }
 

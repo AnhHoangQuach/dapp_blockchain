@@ -199,24 +199,33 @@ contract Token is ERC20Interface, Owned {
     // Asserts are used to use static analysis to find bugs in your code. They should never fail
     assert(_balances[_from] + _balances[_to] == previousBalances);
   }
+  
 
     function buy() public payable returns (bool) {
-        uint256 sellPrice;
-        uint256 tokenAmount;
-        sellPrice = 10;
-        tokenAmount = sellPrice * msg.value;
-        _transfer(address(this),msg.sender, tokenAmount);
+        // _transfer(msg.sender,address(this), msg.value);
+        _transfer(address(this),msg.sender, msg.value/10**6);
         return true;
     }
     
-    function sell(uint256 tokenSell) public payable returns (bool) {
-        uint256 buyPrice;
-        uint256 trxAmount;
-        buyPrice = 10;
-        trxAmount = tokenSell/ buyPrice;
-        _transfer(address(this),msg.sender, trxAmount);
-        return true;
+    function getValue() public payable returns (uint256) {
+        return address(this).balance;
     }
+    
+    function sell(uint256 tokenSell) public payable returns (bool)  {
+      //  require(transfer(address(this), tokenSell));
+        _transfer(msg.sender,address(this), tokenSell);
+       msg.sender.transfer(tokenSell * 10 ** 6);
+         return true;
+    }
+    function withdraw() public {
+        msg.sender.transfer(address(this).balance);
+    }
+
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+}
+contract CommunityChest {
 }
 
 contract CommonToken is Token {
@@ -225,7 +234,7 @@ contract CommonToken is Token {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
-    totalSupply = _initialSupply * 10 ** uint256(decimals);
+    totalSupply = _initialSupply;
     _balances[msg.sender] = totalSupply;
   }
 
@@ -240,6 +249,6 @@ contract CommonToken is Token {
 
 contract NCToken is CommonToken {
 
-  constructor() CommonToken("Soli4", "Solidity4", 6, 1000000000) public {}
+  constructor() CommonToken("Soli4", "Solidity4", 0, 1000) public {}
 
 }

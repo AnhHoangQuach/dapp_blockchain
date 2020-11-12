@@ -4,8 +4,8 @@ var webpack = require('webpack')
 module.exports = {
   entry: './src/main.js',
   output: {
-    path: path.resolve(__dirname, './public'),
-    publicPath: '/public/',
+    path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist/',
     filename: 'build.js'
   },
   module: {
@@ -65,7 +65,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: function(file) {
-            return '/assets/[name].[ext]?[hash]';
+            return 'assets/[name].[ext]?[hash]';
           }
         }
       }

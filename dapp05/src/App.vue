@@ -29,7 +29,17 @@ export default {
           },
           {
             name: 'Learn',
-            items: ['WhitePaper', 'Audit'],
+            items: [
+              {
+                name_link: 'WhitePaper',
+                link: "https://sun.io/docs/sun_whitepaper_en.pdf",
+              },
+              {
+                name_link: 'Audit',
+                link: "https://sun.io/docs/audit-report-sun_en.pdf",
+              },
+            ],
+            isDropdown: false,
           }
         ],
         languages: ['English', '日本語'],

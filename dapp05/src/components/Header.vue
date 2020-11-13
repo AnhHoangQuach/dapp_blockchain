@@ -6,13 +6,25 @@
             </div>
             <div class="menu">
                 <ul class="menu__navbar-list">
-                    <li class="menu__navbar-list-item" v-for="(item, index) in listNavBar" :key="index">
-                        <a :href="item.name">{{item.name}}</a>
+                    <li v-for="(item, index) in listNavBar" :key="index">
+                        <a class="menu__navbar-list-item" :class="(item.isActive == true || item.name == 'SUN') ? 'color_change': ' '" 
+                            :href="item.name"
+                            @mouseover="mouseChange(item)" @mouseout="mouseChange(item)">
+                            {{item.name}}
+                            <transition name="fade">
+                                <ul class="menu__navbar-dropdown" v-show='item.isDropdown'>
+                                    <li v-for="(ele,index) in item.items" :key="index"> 
+                                        <a class="menu__navbar-dropdown-item" :href="ele.link" target="_blank">{{ele.name_link}}</a>
+                                    </li>
+                                </ul>
+                            </transition>
+                        </a>
                     </li>
                 </ul>
             </div>
             <div class="header__right">
-                <div class="header__right-connect-wallet">Connect to Wallet</div>
+                <div class="header__right-connect-wallet" @click="showModal">Connect to Wallet</div>
+                <app-modal v-show="isModalVisible" @close="closeModal"></app-modal>
                 <b-form-select class="header__right-language"
                     v-model="selected"
                     :options="languages"
@@ -23,6 +35,7 @@
 </template>
 
 <script>
+import Modal from './Modal.vue';
 export default {
     props: {
         imgURL: {
@@ -34,18 +47,48 @@ export default {
         },
         languages: {
             type: Array,
-        }
+        },
     },
 
     data: function() {
         return {
             selected: 'English',
+            isModalVisible: false,
         }
     },
+    methods: {
+        mouseChange: function(item) {
+            item.isActive = !item.isActive;
+            if(item.name == 'Learn') {
+                item.isActive = false;
+                item.isDropdown = !item.isDropdown;
+            }
+        },
+        showModal() {
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        }
+    },
+    components: {
+        appModal: Modal,
+    }
 }
 </script>
 
 <style lang="scss" scoped>
+
+    .menu__navbar-dropdown-item {
+        text-decoration: none;
+        color: #333;
+        display: block;
+    }
+
+    .menu__navbar-dropdown-item:hover {
+        color: #6726eb;
+    }
+
     .header-container {
         background-image: url('../assets/bg_header.png');
         background-size: 100%;
@@ -91,15 +134,15 @@ export default {
         .menu__navbar-list-item{
             padding: 6px 14px;
             box-sizing: border-box;
-            background-color: #6726eb;
             border-radius: 5px;
             margin: 0px 10px;
-            
-            a {
-                color: #fff;
-                text-decoration: none;
-                display: block;
-            }
+            color: #fff;
+            text-decoration: none;
+            display: block;
+        }
+
+        .color_change {
+            background-color: #6726eb;
         }
 
         .header__right {
@@ -122,5 +165,27 @@ export default {
         .header__right-language {
             width: 6rem;
         }
+    }
+
+    .menu__navbar-dropdown {
+        position: absolute;
+        background: #fff;
+        top: 3rem;
+        padding: 0 4rem 0 1rem;
+        margin: 0;
+    }
+
+    .menu__navbar-dropdown li {
+        color: #6c757d;
+        list-style: none;
+        line-height: 3rem;
+    }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .2s;
+    }
+
+    .fade-enter, .fade-leave-active {
+        opacity: 0;
     }
 </style>

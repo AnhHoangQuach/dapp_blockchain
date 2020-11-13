@@ -1,60 +1,80 @@
 <template>
-    <div class="sun__content-dashboard-item">
-        <div class="sun__item-header">
-            <div class="sun__item-header-image">
-                <img src="src/assets/sunCoin.png" alt="" class="sunCoin">
-                <img src="src/assets/tronCoin.png " alt="" class="tronCoin"> 
-            </div>
-            <div class="sun__item-header-brand">
-                <span class="sun__item-header-brand-1"> SUN/TRX LP Pool </span><br>
-                <span class="sun__item-header-brand-2"> Stake SUN/TRX LP Earn 
-                    <span class="sun__item-header-multi">9x</span>
-                    <span>SUN</span>
-                </span>
-            </div>
-        </div>
-        <div class="sun__item-body">
-            <div class="sun__item-body-content">
-                <span class="sun__item-body-content-left">Total: 54,463,422,056</span>
-                <span class="sun__item-body-content-right">APY: 37.74%</span>
-            </div>
-            <div class="sun__item-body-table-coin">
-                <p class="sun__item-body-content-coin-title">Total Staked</p>
-                <div class="sun__item-body-content-coin-info">
-                    <span class="sun__item-staked">1,764,583</span>
-                    <span class="sun__item-coin">SUN</span>
+    <b-row>
+        <div v-for="(ele,index) in coins_transactions" :key="index" class="sun__content-dashboard-item">
+            <div class="sun__item-header" :class="(checkNull(ele.coin_one_img) || checkNull(ele.coin_two_img)) ? 'hideEleNext' : ' '">
+                <div class="sun__item-header-image">
+                    <img :class="checkNull(ele.coin_one_img) ? 'hideEle' : ' '" :src="ele.coin_one_img" alt="" class="sunCoin">
+                    <img :class="checkNull(ele.coin_second_img) ? 'hideEle' : ' '" :src="ele.coin_second_img" alt="" class="tronCoin"> 
                 </div>
-                <div class="sun__item-body-content-coin-info">
-                    <span class="sun__item-staked">1,764,583</span>
-                    <span class="sun__item-coin">SUN</span>
-                </div>
-                <p class="sun__item-body-content-footer">Pool Supply</p>
-                <div class="sun__item-body-content-footer-info">
-                    <span class="sun__item-footer-total">1,764,583</span>
-                    <span class="sun__item-footer-coin">SUN</span>
+                <div class="sun__item-header-brand">
+                    <span class="sun__item-header-brand-1"> {{ele.coin_one}}/{{ele.coin_two}} LP Pool </span><br>
+                    <span class="sun__item-header-brand-2"> Stake {{ele.coin_one}}/{{ele.coin_two}} LP Earn 
+                        <span class="sun__item-header-multi">{{ele.multi}}x</span>
+                        <span>{{ele.coin_one}}</span>
+                    </span>
                 </div>
             </div>
-        </div>
-        <div class="sun__item-footer">
-            <div class="sun__item-footer-link">
-                <a class="link-lp" href="https://justswap.io/?lang=en-US?tokenAddress=TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9&type=add#/home" target="">Get LP Token</a>
+            <div class="sun__item-body">
+                <div class="sun__item-body-content">
+                    <span class="sun__item-body-content-left">Total: {{changeCurrency(ele.total)}}</span>
+                    <span class="sun__item-body-content-right">APY: {{ele.api}}%</span>
+                </div>
+                <div class="sun__item-body-table-coin">
+                    <p class="sun__item-body-content-coin-title">Total Staked</p>
+                    <div class="sun__item-body-content-coin-info">
+                        <span class="sun__item-staked">{{changeCurrency(ele.total_stacked_coin_one)}}</span>
+                        <span class="sun__item-coin">{{ele.coin_one}}</span>
+                    </div>
+                    <div class="sun__item-body-content-coin-info">
+                        <span class="sun__item-staked">{{changeCurrency(ele.total_stacked_coin_two)}}</span>
+                        <span class="sun__item-coin">{{ele.coin_two}}</span>
+                    </div>
+                    <p class="sun__item-body-content-footer">Pool Supply</p>
+                    <div class="sun__item-body-content-footer-info">
+                        <span class="sun__item-footer-total">{{changeCurrency(ele.pool_supply)}}</span>
+                        <span class="sun__item-footer-coin">{{ele.coin_one}}</span>
+                    </div>
+                </div>
             </div>
-            <button class="sun__item-footer-button" type="button">Select</button>
+            <div class="sun__item-footer">
+                <div class="sun__item-footer-link">
+                    <a class="link-lp" href="https://justswap.io/?lang=en-US?tokenAddress=TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9&type=add#/home" target="">Get LP Token</a>
+                </div>
+                <button class="sun__item-footer-button" type="button">Select</button>
+            </div>
         </div>
-    </div>
+    </b-row>
 </template>
 
 <script>
 export default {
-    data: function() {
-        return {
-            
+    props: {
+        coins_transactions: {
+            type: Array,
+            default: [],
         }
+    },
+    methods: {
+        changeCurrency(number) {
+            return number.toLocaleString();
+        },
+        checkNull(string) {
+            if(string == null) {
+                return true;
+            } else {
+                return false;
+            }
+        },
     }
 }
 </script>
 
 <style lang="scss">
+
+    .hideEleNext {
+        justify-content: flex-start !important;
+    }
+
     .sun__content-dashboard-item{
         width: 360px;
         height: 440px;
@@ -117,7 +137,7 @@ export default {
     }
 
     .sun__item-body-content-left {
-        font-size: 12px;
+        font-size: 11px;
     }    
 
     .sun__item-body-content-right{

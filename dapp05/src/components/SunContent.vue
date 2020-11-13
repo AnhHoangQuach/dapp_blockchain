@@ -3,11 +3,11 @@
         <div class="sun__content-intro">
             <h1>Today's a good day to sow SUN</h1>
             <h4>Stake to mine and earn SUN</h4>
-            <p>SUN smart contract has been verified by SlowMist. Check out the audit report <a href="https://sun.io/docs/audit-report-sun_en.pdf">here</a></p>
+            <p>SUN smart contract has been verified by SlowMist. Check out the audit report <a href="https://sun.io/docs/audit-report-sun_en.pdf" target="_blank">here</a></p>
         </div>
-        <div class="sun__content-data">
+        <div class="sun__content-data" :class="seen == false ? 'hideEle' : ' ' ">
             Currently we only support staking through this page. Assets that are staked via other means will not be included in Official mining and cannot be returned.
-            <button type="button" class="button-exit">x</button>
+            <button type="button" class="button-exit" @click="seen = !seen">x</button>
         </div>
         <div class="sun__content-dashboard">
             <div class="sun__content-dashboard-nav">
@@ -38,14 +38,16 @@
                 </a>
             </div>
             <div class="sun__content-dashboard-nav-tab">
-                <div class="role_active">Active</div>
-                <div class="role_ended">Ended</div>
+                <div class="role_active">
+                    <a href="">Active</a>
+                </div>
+                <div class="role_ended">
+                    <a href="">Ended</a>
+                </div>
             </div>
             <div class="sun__content-tabs">
                <b-container class="bv-example-row">
-                   <b-row>
-                       <app-item v-for="(item, index) in 8" :key="index"></app-item>
-                   </b-row>
+                    <app-item :coins_transactions="coins_transactions"></app-item>
                </b-container>
             </div>
         </div>
@@ -56,9 +58,110 @@
 import Item from "./Item.vue";
 export default {
     data: function() {
-      return {
-          
-      }
+        return {
+            seen: true,
+            coins_transactions: [
+                {
+                    coin_one: 'SUN',
+                    coin_two: 'TRX',
+                    coin_one_img: 'src/assets/sunCoin.png',
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 9,
+                    total: 54319035319,
+                    api: 36.66,
+                    total_stacked_coin_one: 1791910,
+                    total_stacked_coin_two: 543290451,
+                    pool_supply: 19157,
+                },
+                {
+                    coin_one: 'USDT',
+                    coin_two: 'TRX',
+                    coin_one_img: 'src/assets/tCoin.png',
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 9,
+                    total: 874055404,
+                    api: 18.44,
+                    total_stacked_coin_one: 26819517,
+                    total_stacked_coin_two: 1079987366,
+                    pool_supply: 19157,
+                },
+                {
+                    coin_one: 'JST',
+                    coin_two: 'TRX',
+                    coin_one_img: 'src/assets/uCoin.png',
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 4,
+                    total: 630436190,
+                    api: 21.17,
+                    total_stacked_coin_one: 530725126,
+                    total_stacked_coin_two: 418063347,
+                    pool_supply: 8514,
+                },
+                {
+                    coin_one: 'USDJ',
+                    coin_two: 'TRX',
+                    coin_one_img: 'src/assets/jCoin.png',
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 3,
+                    total: 209337408,
+                    api: 27.73,
+                    total_stacked_coin_one: 6026321,
+                    total_stacked_coin_two: 239125937,
+                    pool_supply: 6385,
+                },
+                {
+                    coin_one: 'WBTT',
+                    coin_two: 'TRX',
+                    coin_one_img: 'src/assets/denCoin.png',
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 1,
+                    total: 860996172,
+                    api: 23.52,
+                    total_stacked_coin_one: 8138677022,
+                    total_stacked_coin_two: 93977324,
+                    pool_supply: 2128,
+                },
+                {
+                    coin_one: 'WIN',
+                    coin_two: 'TRX',
+                    coin_one_img: 'src/assets/wCoin.png',
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 1,
+                    total: 2790732664,
+                    api: 39.84,
+                    total_stacked_coin_one: 16111811449,
+                    total_stacked_coin_two: 55479805,
+                    pool_supply: 2128,
+                },
+                {
+                    coin_one: 'TRX',
+                    coin_two: null,
+                    coin_one_img: null,
+                    coin_second_img: 'src/assets/tronCoin.png',
+                    multi: 4,
+                    total: 0,
+                    api: 7.37,
+                    total_stacked_coin_one: 0,
+                    total_stacked_coin_two: 2400814543344,
+                    pool_supply: 8514,
+                },
+                {
+                    coin_one: 'SUN',
+                    coin_two: null,
+                    coin_one_img: 'src/assets/sunCoin.png',
+                    coin_second_img: null,
+                    multi: 3,
+                    total: 0,
+                    api: 27.5,
+                    total_stacked_coin_one: 1590425624,
+                    total_stacked_coin_two: 0,
+                    pool_supply: 6385,
+                },
+            ]
+        }
+    },
+    methods: {
+
     },
     components: {
         appItem: Item,
@@ -67,6 +170,12 @@ export default {
 </script>
 
 <style lang="scss">
+
+    .hideEle {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s 0.2s, opacity 0.2s linear;
+    }
 
     body {
         background-color: #f9f9fd;
@@ -193,6 +302,11 @@ export default {
         display: inline-table;
     }
 
+    .sun__content-dashboard-nav > a {
+        text-decoration: none;
+        color: #fff;
+    }
+
     .questionCircle {
         display: inline-block;
         background: transparent;
@@ -220,13 +334,23 @@ export default {
         line-height: 3.2rem;
     }
 
-    .role_active {
+    .role_active a{
         color: #5915e1;
+        text-decoration: none;
     }
 
     .role_active:after {
         content: "";
         border: 1px solid #ddd;
         margin: 0 1rem;
+    }
+
+    .role_ended a{
+        color: #333;
+        text-decoration: none;
+    }
+
+    .role_ended a:hover {
+        color: #5915e1;
     }
 </style>

@@ -62,6 +62,7 @@ export default {
             seen: true,
             coins_transactions: [
                 {
+                    id: 1,
                     coin_one: 'SUN',
                     coin_two: 'TRX',
                     coin_one_img: 'src/assets/sunCoin.png',
@@ -74,6 +75,7 @@ export default {
                     pool_supply: 19157,
                 },
                 {
+                    id: 2,
                     coin_one: 'USDT',
                     coin_two: 'TRX',
                     coin_one_img: 'src/assets/tCoin.png',
@@ -86,6 +88,7 @@ export default {
                     pool_supply: 19157,
                 },
                 {
+                    id: 3,
                     coin_one: 'JST',
                     coin_two: 'TRX',
                     coin_one_img: 'src/assets/uCoin.png',
@@ -98,6 +101,7 @@ export default {
                     pool_supply: 8514,
                 },
                 {
+                    id: 4,
                     coin_one: 'USDJ',
                     coin_two: 'TRX',
                     coin_one_img: 'src/assets/jCoin.png',
@@ -110,6 +114,7 @@ export default {
                     pool_supply: 6385,
                 },
                 {
+                    id: 5,
                     coin_one: 'WBTT',
                     coin_two: 'TRX',
                     coin_one_img: 'src/assets/denCoin.png',
@@ -122,6 +127,7 @@ export default {
                     pool_supply: 2128,
                 },
                 {
+                    id: 6,
                     coin_one: 'WIN',
                     coin_two: 'TRX',
                     coin_one_img: 'src/assets/wCoin.png',
@@ -134,9 +140,8 @@ export default {
                     pool_supply: 2128,
                 },
                 {
+                    id: 7,
                     coin_one: 'TRX',
-                    coin_two: null,
-                    coin_one_img: null,
                     coin_second_img: 'src/assets/tronCoin.png',
                     multi: 4,
                     total: 0,
@@ -146,10 +151,9 @@ export default {
                     pool_supply: 8514,
                 },
                 {
+                    id: 8, 
                     coin_one: 'SUN',
-                    coin_two: null,
                     coin_one_img: 'src/assets/sunCoin.png',
-                    coin_second_img: null,
                     multi: 3,
                     total: 0,
                     api: 27.5,

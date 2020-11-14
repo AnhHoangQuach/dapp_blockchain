@@ -1,10 +1,10 @@
 <template>
     <b-row>
-        <div v-for="(ele,index) in coins_transactions" :key="index" class="sun__content-dashboard-item">
-            <div class="sun__item-header" :class="(checkNull(ele.coin_one_img) || checkNull(ele.coin_two_img)) ? 'hideEleNext' : ' '">
-                <div class="sun__item-header-image">
-                    <img :class="checkNull(ele.coin_one_img) ? 'hideEle' : ' '" :src="ele.coin_one_img" alt="" class="sunCoin">
-                    <img :class="checkNull(ele.coin_second_img) ? 'hideEle' : ' '" :src="ele.coin_second_img" alt="" class="tronCoin"> 
+        <div v-for="(ele,index) in coins_transactions" :key="ele.id" class="sun__content-dashboard-item">
+            <div class="sun__item-header">
+                <div class="sun__item_header_image" :style="{width: (ele.id === parseInt(coins_transactions.length - 1) ? '0px' : '30%')}">
+                    <img v-if="typeof(ele.coin_one_img) === 'string'" :src="ele.coin_one_img" alt="" class="sunCoin">
+                    <img v-if="typeof(ele.coin_second_img) === 'string'" :src="ele.coin_second_img" alt="" class="tronCoin">
                 </div>
                 <div class="sun__item-header-brand">
                     <span class="sun__item-header-brand-1"> {{ele.coin_one}}/{{ele.coin_two}} LP Pool </span><br>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import $ from 'jquery';
 export default {
     props: {
         coins_transactions: {
@@ -54,26 +55,27 @@ export default {
             default: [],
         }
     },
+    data: function () {
+        return {
+
+        }
+    },
+    computed: {
+        changeCSS() {
+            if($('.sun__item_header_image')) {
+                $(this).css('width', '0');
+            }
+        }
+    },
     methods: {
         changeCurrency(number) {
             return number.toLocaleString();
         },
-        checkNull(string) {
-            if(string == null) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-    }
+    },
 }
 </script>
 
 <style lang="scss">
-
-    .hideEleNext {
-        justify-content: flex-start !important;
-    }
 
     .sun__content-dashboard-item{
         width: 360px;
@@ -90,12 +92,12 @@ export default {
         justify-content: space-between;
     }
 
-    .sun__item-header-image{
+    .sun__item_header_image{
         position: relative;
         width: 30%;
     }
 
-    .sunCoin, .tronCoin{
+    .sun__item_header_image img{
         width: 50px;
         height: 50px;
     }

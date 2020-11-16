@@ -24,16 +24,39 @@ export default {
 <style lang="scss">
     .footer-contact__qrCode {
         display: none;
+        width: 120px;
+        height: 120px;
     }
 
     .footer-contact {
         text-align: center;
-        padding-bottom: 2rem;
+        padding-bottom: 2.5rem;
+        width: 80%;
+        padding-top: 2.5rem;
+        margin: 0 auto;
     }
 
     .footer-contact a {
         color: #999;
         font-size: 12px;
         margin: 0 2rem;
+        text-decoration: none;
+        position: relative;
+    }
+
+    .footer-contact a:hover {
+        color: #5915e1;
+    }
+
+    .footer-contact a:last-child {
+        cursor: pointer;
+    }
+
+    .footer-contact a:last-child:hover .footer-contact__qrCode {
+        position: absolute;
+        top: -135px;
+        left: -35px;
+        display: block;
+        z-index: 10;
     }
 </style>

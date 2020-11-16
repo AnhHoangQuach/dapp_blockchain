@@ -6,8 +6,8 @@
             </div>
             <div class="menu">
                 <ul class="menu__navbar-list">
-                    <li v-for="(item, index) in listNavBar" :key="index">
-                        <a class="menu__navbar-list-item" :class="(item.isActive == true || item.name == 'SUN') ? 'color_change': ' '" 
+                    <li v-for="(item) in listNavBar" :key="item.id">
+                        <a class="menu__navbar-list-item" :class="(item.isActive == true || item.name == 'SUN') ? 'color_change': ' '" @click.prevent="changeSelected(item)"
                             :href="item.name"
                             @mouseover="mouseChange(item)" @mouseout="mouseChange(item)">
                             {{item.name}}
@@ -38,6 +38,9 @@
 import Modal from './Modal.vue';
 export default {
     props: {
+        isChoice: {
+            type: String,
+        },
         imgURL: {
             type: String,
             default: "src/assets/sunLogo.png",
@@ -69,6 +72,10 @@ export default {
         },
         closeModal() {
             this.isModalVisible = false;
+        },
+        changeSelected(item) {
+            var data = item.name;
+            this.$emit('selectChoice', data);
         }
     },
     components: {

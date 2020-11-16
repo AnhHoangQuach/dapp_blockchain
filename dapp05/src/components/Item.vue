@@ -1,46 +1,48 @@
 <template>
     <b-row>
-        <div v-for="(ele,index) in coins_transactions" :key="ele.id" class="sun__content-dashboard-item">
+        <div v-for="(ele) in coins_transactions" :key="ele.id" class="sun__content-dashboard-item">
             <div class="sun__item-header">
-                <div class="sun__item_header_image" :style="{width: (ele.id === parseInt(coins_transactions.length - 1) ? '0px' : '30%')}">
-                    <img v-if="typeof(ele.coin_one_img) === 'string'" :src="ele.coin_one_img" alt="" class="sunCoin">
+                <div class="sun__item_header_image" :style="{width: (ele.id === parseInt(coins_transactions.length - 1)) ? '0px' : '30%'}">
+                    <img v-if="typeof(ele.coin_one_img) === 'string'" :src="ele.coin_one_img" alt="" class="sunCoin" :style="{position: (ele.id === parseInt(coins_transactions.length)) ? 'relative' : ' '}">
                     <img v-if="typeof(ele.coin_second_img) === 'string'" :src="ele.coin_second_img" alt="" class="tronCoin">
                 </div>
                 <div class="sun__item-header-brand">
-                    <span class="sun__item-header-brand-1"> {{ele.coin_one}}/{{ele.coin_two}} LP Pool </span><br>
-                    <span class="sun__item-header-brand-2"> Stake {{ele.coin_one}}/{{ele.coin_two}} LP Earn 
+                    <span class="sun__item-header-brand-1"> {{ele.coin_one}}{{typeof(ele.coin_two) === 'string' ? '/' + `${ele.coin_two}` + ' LP' : ' '}} Pool </span><br>
+                    <span class="sun__item-header-brand-2"> Stake {{ele.coin_one}}{{typeof(ele.coin_two) === 'string' ? '/' + `${ele.coin_two}` + ' LP' : ' '}} Earn  
                         <span class="sun__item-header-multi">{{ele.multi}}x</span>
-                        <span>{{ele.coin_one}}</span>
+                        <span>{{ele.default_coin}}</span>
                     </span>
                 </div>
             </div>
             <div class="sun__item-body">
                 <div class="sun__item-body-content">
-                    <span class="sun__item-body-content-left">Total: {{changeCurrency(ele.total)}}</span>
+                    <span class="sun__item-body-content-left" :style="{visibility: ele.total === 0 ? 'hidden' : ' '}">Total: {{changeCurrency(ele.total)}}</span>
                     <span class="sun__item-body-content-right">APY: {{ele.api}}%</span>
                 </div>
                 <div class="sun__item-body-table-coin">
                     <p class="sun__item-body-content-coin-title">Total Staked</p>
-                    <div class="sun__item-body-content-coin-info">
+                    <div class="sun__item-body-content-coin-info" v-if="typeof(ele.total_stacked_coin_one) === 'number'">
                         <span class="sun__item-staked">{{changeCurrency(ele.total_stacked_coin_one)}}</span>
                         <span class="sun__item-coin">{{ele.coin_one}}</span>
                     </div>
-                    <div class="sun__item-body-content-coin-info">
+                    <div class="sun__item-body-content-coin-info" v-if="typeof(ele.total_stacked_coin_two) === 'number'">
                         <span class="sun__item-staked">{{changeCurrency(ele.total_stacked_coin_two)}}</span>
                         <span class="sun__item-coin">{{ele.coin_two}}</span>
                     </div>
                     <p class="sun__item-body-content-footer">Pool Supply</p>
                     <div class="sun__item-body-content-footer-info">
                         <span class="sun__item-footer-total">{{changeCurrency(ele.pool_supply)}}</span>
-                        <span class="sun__item-footer-coin">{{ele.coin_one}}</span>
+                        <span class="sun__item-footer-coin">{{ele.default_coin}}</span>
                     </div>
                 </div>
             </div>
             <div class="sun__item-footer">
                 <div class="sun__item-footer-link">
-                    <a class="link-lp" href="https://justswap.io/?lang=en-US?tokenAddress=TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9&type=add#/home" target="">Get LP Token</a>
+                    <a class="link-lp" href="https://justswap.io/?lang=en-US?tokenAddress=TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9&type=add#/home" target="">
+                        Get {{ (ele.id === parseInt(coins_transactions.length)) ? 'SUN' : (ele.id === parseInt(coins_transactions.length - 1)) ? 'TRX' : 'LP Token'}}
+                    </a>
                 </div>
-                <button class="sun__item-footer-button" type="button">Select</button>
+                <button class="sun__item-footer-button">Select</button>
             </div>
         </div>
     </b-row>
@@ -61,11 +63,7 @@ export default {
         }
     },
     computed: {
-        changeCSS() {
-            if($('.sun__item_header_image')) {
-                $(this).css('width', '0');
-            }
-        }
+        
     },
     methods: {
         changeCurrency(number) {
@@ -84,6 +82,7 @@ export default {
         padding: 20px;
         background-color: #fff;
         margin: 0 0.6rem 1.5rem;
+        position: relative;
     }
 
     .sun__item-header {
@@ -148,7 +147,8 @@ export default {
     }
     
     .sun__item-header-multi {
-        color:#5915e1;
+        font-weight: 600;
+        color: #6726eb;
     }
 
     .sun__item-body-table-coin {
@@ -181,11 +181,25 @@ export default {
         font-size: 14px;
     }
 
+    .sun__item-footer {
+        position: absolute;
+        bottom: 20px;
+        width: calc(100% - 40px);
+    }
+
     .sun__item-coin, .sun__item-footer-coin {
         font-family: HelveticaNeue;
         font-size: 12px;
         color: #999;
         letter-spacing: 0;
+    }
+
+    .sun__item-footer-link a {
+        text-decoration: none;   
+    }
+
+    .sun__item-footer-link a:hover {
+        color: #6726eb;
     }
 
     .link-lp {
@@ -197,14 +211,15 @@ export default {
     }
 
     .sun__item-footer-button {
-        background: #5915e1;
+        cursor: not-allowed;
+        background: #e2d9f6;
         border-radius: 10px;
         width: 100%;
         height: 40px;
         line-height: 40px;
         font-family: HelveticaNeue;
         font-size: 12px;
-        color: #fff;
+        color: #b79cef;
         letter-spacing: 0;
         text-align: center;
         display: block;

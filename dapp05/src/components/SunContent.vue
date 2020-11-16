@@ -39,15 +39,16 @@
             </div>
             <div class="sun__content-dashboard-nav-tab">
                 <div class="role_active">
-                    <a href="">Active</a>
+                    <a @click.prevent="isEnded = false" href="" :style="{color: isEnded ? '#333' : '#5915e1'}">Active</a>
                 </div>
                 <div class="role_ended">
-                    <a href="">Ended</a>
+                    <a @click.prevent="isEnded = !isEnded" href="" :style="{color: isEnded ? '#5915e1' : '#333'}">Ended</a>
                 </div>
             </div>
             <div class="sun__content-tabs">
                <b-container class="bv-example-row">
-                    <app-item :coins_transactions="coins_transactions"></app-item>
+                    <app-ended v-if="isEnded"></app-ended>
+                    <app-item v-else :coins_transactions="coins_transactions"></app-item>
                </b-container>
             </div>
         </div>
@@ -56,9 +57,11 @@
 
 <script>
 import Item from "./Item.vue";
+import Ended from "./Ended.vue";
 export default {
     data: function() {
         return {
+            isEnded: false,
             seen: true,
             coins_transactions: [
                 {
@@ -73,6 +76,7 @@ export default {
                     total_stacked_coin_one: 1791910,
                     total_stacked_coin_two: 543290451,
                     pool_supply: 19157,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 2,
@@ -86,6 +90,7 @@ export default {
                     total_stacked_coin_one: 26819517,
                     total_stacked_coin_two: 1079987366,
                     pool_supply: 19157,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 3,
@@ -99,6 +104,7 @@ export default {
                     total_stacked_coin_one: 530725126,
                     total_stacked_coin_two: 418063347,
                     pool_supply: 8514,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 4,
@@ -112,6 +118,7 @@ export default {
                     total_stacked_coin_one: 6026321,
                     total_stacked_coin_two: 239125937,
                     pool_supply: 6385,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 5,
@@ -125,6 +132,7 @@ export default {
                     total_stacked_coin_one: 8138677022,
                     total_stacked_coin_two: 93977324,
                     pool_supply: 2128,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 6,
@@ -138,6 +146,7 @@ export default {
                     total_stacked_coin_one: 16111811449,
                     total_stacked_coin_two: 55479805,
                     pool_supply: 2128,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 7,
@@ -146,9 +155,9 @@ export default {
                     multi: 4,
                     total: 0,
                     api: 7.37,
-                    total_stacked_coin_one: 0,
-                    total_stacked_coin_two: 2400814543344,
+                    total_stacked_coin_one: 2400814543344,
                     pool_supply: 8514,
+                    default_coin: 'SUN',
                 },
                 {
                     id: 8, 
@@ -158,8 +167,8 @@ export default {
                     total: 0,
                     api: 27.5,
                     total_stacked_coin_one: 1590425624,
-                    total_stacked_coin_two: 0,
                     pool_supply: 6385,
+                    default_coin: 'SUN',
                 },
             ]
         }
@@ -169,6 +178,7 @@ export default {
     },
     components: {
         appItem: Item,
+        appEnded: Ended,
     }
 }
 </script>
@@ -338,8 +348,7 @@ export default {
         line-height: 3.2rem;
     }
 
-    .role_active a{
-        color: #5915e1;
+    .role_active a, .role_ended a{
         text-decoration: none;
     }
 
@@ -349,12 +358,7 @@ export default {
         margin: 0 1rem;
     }
 
-    .role_ended a{
-        color: #333;
-        text-decoration: none;
-    }
-
-    .role_ended a:hover {
+    .role_active a:hover, .role_ended a:hover {
         color: #5915e1;
     }
 </style>

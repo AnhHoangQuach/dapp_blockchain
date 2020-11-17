@@ -225,80 +225,161 @@ contract CommonToken is Token {
 
 contract Olacoin is CommonToken {
     
-    address teamGroup = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
-    address serviceGroup = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
-    address partnerGroup = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
-    address bountyGroup = 0x617F2E2fD72FD9D5503197092aC168c91465E7f2;
+    address public teamAddress = address(0x414376ee6cb104b92c3dd9c8afd2a3ca83219ee918);
+    address public serviceAddress = address(0x41de26c4f5f0e2cee7dde5a5304bc4f5d1caaa08c0);
+    address public partnerAddress = address(0x41f3721ef1372b754563edb06431e1382fc959bae2);
+    address public bountyAddress = address(0x41773e849bcdd61b6223110e0d1fab9828d6b95272);
     
-    struct Lockstep {
+    // address public teamGroup = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
+    // address public serviceGroup = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
+    // address public partnerGroup = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
+    // address public bountyGroup = 0x617F2E2fD72FD9D5503197092aC168c91465E7f2;
+    // address public bountyGroup2 = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    uint256 public teamAmount =   9000;
+    uint256 public serviceAmount =  80000;
+    uint256 public partnerAmount = 9000;
+   
+    // tronWeb.address.toHex('0x41773e849bcdd61b6223110e0d1fab9828d6b95272');
+    
+//     function convertFromTronInt(uint256 tronAddress) public pure returns(address){
+//       return address(tronAddress);
+// }
+    // function setAddress(address _teamGroup, address _serviceGroup,address _partnerGroup, address _bountyGroup)public returns (address ){
+    //     teamGroup = _teamGroup;
+    //     serviceGroup = _serviceGroup;
+    //     partnerGroup = _partnerGroup;
+    //     bountyGroup = _bountyGroup;
+    //     return teamGroup;
+    // }
+   
+    struct UnlockStages {
         uint256  unlockDate;
         uint256  amount;
     }
     
-    mapping (address => Lockstep[]) public lockList;
+    mapping (address => UnlockStages[]) public unlockList;
     mapping (uint => uint) public timeRelease;
-
-    function startingTime() public returns (uint256){
+    mapping (uint => uint) public Price;
+    
+    function setStartingTime() public returns (uint256){
         timeRelease[0] = now;
         return timeRelease[0];
     }
     
-  constructor() CommonToken("Olacoin", "OLA", 0, 100000000000 ) public {
-    // uint256 teamAmount =   9000000000;
-    // uint256 serviceAmount =  80000000000;
-    // uint256 partnerAmount = 9000000000;
-    
-//   timeRelease[0] = now;
-  for( uint256 i = 1; i<=40; i++){
-      timeRelease[i] = timeRelease[i-1] + 20;
+    // UnlockStages firstStage = UnlockStages(timeRelease[0],0);
+    // unlockList[teamAddress].push(firstStage);
+   constructor() CommonToken("Olacoin", "OLA", 0, 100000 ) public {
+   
+    // function setStartingTime() public returns (uint256){
+    //     timeRelease[1] = now;
+    //     return timeRelease[0];
+    // }
+    // timeRelease[1] = now;\
+    // for(uint256 i = 2; i< 12; i++){
+	   // Price[1] = uint(1/1000);
+	   // Price[i] = Price[i-1] * 15/100;
+    // }
+    //  for(uint256 i = 13; i< 120; i++){
+	   // Price[13] = uint(1/1000);
+	   // Price[i] = Price[i-1] * 15/100;
+    // }
+    uint256 timeAdd = 10;
+    for( uint256 i = 1; i<=120; i++){
+      timeRelease[i] = timeRelease[i-1] + timeAdd;
        
-  }
-  for(uint256 i = 1; i<=12; i++){
-        unlock(teamGroup, 750 * 10**6, timeRelease[i] );
-        unlock(partnerGroup,750 * 10**6, timeRelease[i]);
-  }
-  for(uint256 i = 1; i<=40; i++){
-        unlock(serviceGroup, 2*10**9, timeRelease[i] );
-  }
-  
-  unlock(bountyGroup, 2*10**9, timeRelease[1]);
-  }
+    }
+    for(uint256 i = 1; i<36; i++){
+          if(i%3 == 1){
+            unlock(teamAddress, 750 , timeRelease[i] );
+            unlock(partnerAddress,750 , timeRelease[i]);
+        }
+    }
+    for(uint256 i = 1; i<120; i++){
+        if(i%3 == 1){
+            unlock(serviceAddress, 2000, timeRelease[i] );
+        }
+    }
+    unlock(bountyAddress, 2000, timeRelease[1]);
     
-    function unlock(address _account, uint256 _amount, uint256 _timeRelease) public returns (bool success)
-	{
+    UnlockStages memory _firstStage = UnlockStages(timeRelease[0], 0);
+    unlockList[teamAddress].push(_firstStage);
+    unlockList[serviceAddress].push(_firstStage);
+    unlockList[partnerAddress].push(_firstStage);
+}
+  
+    //  function firstStage()public {
+    //   UnlockStages memory _firstStage = UnlockStages(timeRelease[0],0);
+    //   unlockList[teamAddress].push(_firstStage);
+    //   unlockList[serviceAddress].push(_firstStage);
+    //   unlockList[partnerAddress].push(_firstStage);
+    //   }
+      
+    
+   
+    
+    function unlock(address _account, uint256 _amount, uint256 _timeRelease) public returns (bool success){
         _transfer(msg.sender,_account,_amount);
-    	Lockstep memory item = Lockstep(_timeRelease,_amount);
-		lockList[_account].push(item);
-	
+    	UnlockStages memory nextStages = UnlockStages(_timeRelease,_amount);
+    // 	UnlockStages memory _firstStage = UnlockStages(timeRelease[0], 0);
+    // 	unlockList[_account][1][0].push(_firstStage);
+		unlockList[_account].push(nextStages);
         return true;
-        
 	} 
-	function timesOfUnlock(address _account) public view returns (uint256){
-	    return lockList[_account].length;
+	function getNumberOfUnlockStage(address _account) public view returns (uint256){
+	    return unlockList[_account].length;
 	}
-	function getAmountUnlock(address _account, uint256 _times) public view returns (uint256){
+	
+	function getTotalAmountUnlockAt(address _account, uint256 _times) public view returns (uint256){
 	    uint256 totalAmountUnlock = 0;
 	    for(uint256 i = 0; i<=_times; i++){
-	        uint256 amountUnlock = lockList[_account][i].amount;
+	        uint256 amountUnlock = unlockList[_account][i].amount;
 	        totalAmountUnlock += amountUnlock;
 	    }
 	    return totalAmountUnlock;
 	}
-	function getCurrentUnlock() public view returns (uint256){
-	    uint256 currentUnlock = (now - timeRelease[0])/20;
-	    return currentUnlock;
+	
+	function getCurrentUnlockStage() public view returns (uint256){
+	    uint256 currentUnlockStage = (now - timeRelease[0])/10;
+	    require(currentUnlockStage<41);
+	    return currentUnlockStage;
 	}
-	function getCurrentAmountUnlock(address _account) public view returns (uint256){
-	    uint256 totalCurentAmountUnlock = 0;
-	    uint256 times = (now - timeRelease[0])/60;
+	
+	function getCurrentTotalAmountUnlock(address _account) public view returns (uint256){
+	    uint256 currentTotalAmountUnlocked = 0;
+	    uint256 times = (now - timeRelease[0])/10;
 	    for(uint256 i = 1; i<= times; i++){
-	        uint256 currentAmountUnlock = lockList[_account][i].amount;
-	        totalCurentAmountUnlock += currentAmountUnlock;
+	        uint256 currentAmountUnlock = unlockList[_account][i].amount;
+	        currentTotalAmountUnlocked += currentAmountUnlock;
 	    }
-	    return totalCurentAmountUnlock;
+	    return currentTotalAmountUnlocked;
 	}
+	function getCurrentTotalAmountLocked(address _account) public view returns (uint256){
+	  
+	    uint256 totalAmountUnlocked = getCurrentTotalAmountUnlock(_account);
+	    uint256 currentTotalAmountLock = 0;
+	    if(_account == teamAddress){
+	        currentTotalAmountLock = teamAmount - totalAmountUnlocked;
+	    }
+	    if(_account == serviceAddress){
+	        currentTotalAmountLock = serviceAmount - totalAmountUnlocked;
+	    }
+	    if(_account == partnerAddress){
+	        currentTotalAmountLock = partnerAmount - totalAmountUnlocked;
+	    }
+	    return currentTotalAmountLock;
+	}
+	function getCurrentTotalUnlockCoin()public view returns (uint256){
+	    uint256 currentTotalUnlockCoin = getCurrentTotalAmountUnlock(teamAddress) + getCurrentTotalAmountUnlock(serviceAddress)
+	                                    + getCurrentTotalAmountUnlock(partnerAddress) + 2000;
+	   return currentTotalUnlockCoin;
+	}
+	
+	
+// 	function getPriceAt(uint256 _numberofStage) public view returns (uint256){
+// 	    uint256 price = Price[_numberofStage];
+// 	    return price;
+//     }
 }
-
 
 
 

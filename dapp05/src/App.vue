@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <app-header :listNavBar="listNavBar" :languages="languages"></app-header>
-    <div v-on:selectChoice="updateParent">
+    <app-header :listNavBar="listNavBar" :languages="languages" v-on:selectChoice="updateParent"></app-header>
+    <div>
       <sun-content v-if="isChoice === 'SUN'"></sun-content>
       <app-vote v-else-if="isChoice === 'Vote'"></app-vote>
-      <p>{{isChoice}}</p>
+      <app-faq v-else-if="isChoice === 'FAQs'"></app-faq>
     </div>
     <app-footer></app-footer>
   </div>
@@ -15,6 +15,7 @@ import Header from "./components/Header.vue";
 import SunContent from "./components/SunContent.vue";
 import Footer from "./components/Footer.vue";
 import Vote from "./components/Vote.vue";
+import Faq from "./components/FAQs.vue";
 export default {
     data: function() {
       return {
@@ -60,6 +61,7 @@ export default {
       sunContent: SunContent,
       appFooter: Footer,
       appVote: Vote,
+      appFaq: Faq,
     },
     methods: {
       updateParent(value) {

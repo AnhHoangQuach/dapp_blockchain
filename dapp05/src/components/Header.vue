@@ -7,18 +7,17 @@
             <div class="menu">
                 <ul class="menu__navbar-list">
                     <li v-for="(item) in listNavBar" :key="item.id">
-                        <a class="menu__navbar-list-item" :class="(item.isActive == true || item.name == 'SUN') ? 'color_change': ' '" @click.prevent="changeSelected(item)"
-                            :href="item.name"
-                            @mouseover="mouseChange(item)" @mouseout="mouseChange(item)">
+                        <div class="menu__navbar-list-item" @click="changeSelected(item, $event)" 
+                            :href="item.name" :class="{active: item.isActive}" >
                             {{item.name}}
                             <transition name="fade">
-                                <ul class="menu__navbar-dropdown" v-show='item.isDropdown'>
-                                    <li v-for="(ele,index) in item.items" :key="index"> 
+                                <ul class="menu__navbar-dropdown">
+                                    <li v-for="(ele,index) in item.items" :key="index">
                                         <a class="menu__navbar-dropdown-item" :href="ele.link" target="_blank">{{ele.name_link}}</a>
                                     </li>
                                 </ul>
                             </transition>
-                        </a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -51,6 +50,9 @@ export default {
         languages: {
             type: Array,
         },
+        isChoice: {
+            type: String,
+        }
     },
 
     data: function() {
@@ -60,21 +62,24 @@ export default {
         }
     },
     methods: {
-        mouseChange: function(item) {
-            item.isActive = !item.isActive;
-            if(item.name == 'Learn') {
-                item.isActive = false;
-                item.isDropdown = !item.isDropdown;
-            }
-        },
         showModal() {
             this.isModalVisible = true;
         },
         closeModal() {
             this.isModalVisible = false;
         },
-        changeSelected(item) {
+        changeSelected(item, event) {
             var data = item.name;
+            this.listNavBar.forEach(function(itemList, index, array) {
+                if(itemList.name === data && data !== 'Learn') {
+                    itemList.isActive = true;
+                } else {
+                    itemList.isActive = false;
+                }
+            });
+            if(data === 'Learn') {
+                return;
+            }
             this.$emit('selectChoice', data);
         }
     },
@@ -85,6 +90,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+    .active {
+        background-color: #6726eb;
+    }
+
+    .menu__navbar-list > li:not(:last-child):hover {
+        background-color: #6726eb;
+        border-radius: 5px;
+    }
+
+    .menu__navbar-list-item:last-child:hover .menu__navbar-dropdown {
+        display: block;
+    }
 
     .menu__navbar-dropdown-item {
         text-decoration: none;
@@ -146,10 +164,7 @@ export default {
             color: #fff;
             text-decoration: none;
             display: block;
-        }
-
-        .color_change {
-            background-color: #6726eb;
+            cursor: pointer;
         }
 
         .header__right {
@@ -177,9 +192,10 @@ export default {
     .menu__navbar-dropdown {
         position: absolute;
         background: #fff;
-        top: 3rem;
+        top: 2.2rem;
         padding: 0 4rem 0 1rem;
         margin: 0;
+        display: none;
     }
 
     .menu__navbar-dropdown li {

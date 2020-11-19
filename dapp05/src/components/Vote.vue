@@ -1,39 +1,47 @@
 <template>
-    <div class="vote__list-container">
-        <div class="vote__list-title">Vote</div>
-        <div class="vote__list-content">
-            <div class="role-tab">
-                <div class="role-tab-active" @click="isActive = true" >Active</div>
-                <div class="role-tab-closed" @click="isActive = false">Closed</div>
-                <div class="line" :style="{left: !isActive ? '6%' : '0'}"></div>
-            
-            </div>
-            <div class="vote__list-card" v-if="isActive">
-                <div class="vote__list-card-img">
-                    <img src="src/assets/emptyCard.png" alt="">
+    <div>
+        <vote-child v-if="currentComponent"></vote-child>
+        <div class="vote__list-container" v-else>
+            <div class="vote__list-title">Vote</div>
+            <div class="vote__list-content">
+                <div class="role-tab">
+                    <div class="role-tab-active" @click="isActive = true" >Active</div>
+                    <div class="role-tab-closed" @click="isActive = false">Closed</div>
+                    <div class="line" :style="{left: !isActive ? '6%' : '0'}"></div>
+                
                 </div>
-                <div class="vote__list-card-img-title">
-                    <span>No proposal up for vote. Please check other voting instead.</span>
+                <div class="vote__list-card" v-if="isActive">
+                    <div class="vote__list-card-img">
+                        <img src="src/assets/emptyCard.png" alt="">
+                    </div>
+                    <div class="vote__list-card-img-title">
+                        <span>No proposal up for vote. Please check other voting instead.</span>
+                    </div>
                 </div>
+                <app-closed v-on:changeComp="updateParent" v-else></app-closed>
             </div>
-            <app-closed v-else></app-closed>
         </div>
     </div>
 </template>
 
 <script>
 import Closed from "./Closed.vue"
+import VoteChild from './VoteChild.vue';
 export default {
     data: function() {
         return {
             isActive: true,
+            currentComponent: false,
         }
     },
     methods: {
-
+        updateParent(value) {
+            this.currentComponent = value;
+        }
     },
     components: {
         appClosed: Closed,
+        voteChild: VoteChild,
     }
 }
 </script>

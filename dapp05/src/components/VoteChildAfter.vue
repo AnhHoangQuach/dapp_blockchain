@@ -25,6 +25,10 @@
                                 <span>3</span>
                                 Votes you cast and the voting rewards can be claimed when the voting session ends.
                             </li>
+                            <li style="color: red">
+                                <span>4</span>
+                                All candidate projects are projects with higher trading volume and liquidity recently on JustSwap and are not endorsed by the official team.
+                            </li>
                         </ul>
                     </div>
                 </div>

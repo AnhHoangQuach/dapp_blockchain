@@ -15,7 +15,7 @@
                     <div class="sun__content-dashboard-info-title">
                         <img src="src/assets/stake.svg" alt="">
                         Total Staked Value
-                        <a href="" class="rules">Mining rules</a>
+                        <a href="" class="rules" target="_blank">Mining rules</a>
                     </div>
                     <div class="sun__content-dashboard-info-mined_amount">
                         &asymp;

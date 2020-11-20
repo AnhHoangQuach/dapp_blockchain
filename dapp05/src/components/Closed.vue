@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="vote__list-closed-container">
-            <div class="vote-list-card" @click="swapComponent()">
+            <div class="vote-list-card" @click="swapComponent(1)">
                 <div class="l1">
                     <div class="l1-left">Vote for Your Favorite Pool</div>
                     <div class="l1-right">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
             </div>
-            <div class="vote-list-card" @click="swapComponent()">
+            <div class="vote-list-card" @click="swapComponent(2)">
                 <div class="l1">
                     <div class="l1-left">Vote the featured token onto JustSwap’s token list</div>
                     <div class="l1-right">
@@ -50,8 +50,7 @@ export default {
         }
     },
     methods: {
-        swapComponent() {
-            var data = true;
+        swapComponent(data) {
             this.$emit('changeComp', data);
         }
     },

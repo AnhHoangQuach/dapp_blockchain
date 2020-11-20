@@ -16,7 +16,6 @@ import SunContent from "./components/SunContent.vue";
 import Footer from "./components/Footer.vue";
 import Vote from "./components/Vote.vue";
 import Faq from "./components/FAQs.vue";
-import getTron from "./utils/getTron.js";
 export default {
     data: function() {
       return {
@@ -68,7 +67,7 @@ export default {
       updateParent(value) {
         this.isChoice = value;
       }
-    }
+    },
 }
 </script>
 

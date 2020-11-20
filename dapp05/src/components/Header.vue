@@ -22,7 +22,7 @@
                 </ul>
             </div>
             <div class="header__right">
-                <div class="header__right-connect-wallet" @click="showModal">Connect to Wallet</div>
+                <div id="idConnect" class="header__right-connect-wallet" @click="showModal">{{addressUser ? addressUser : 'Connect to Wallet'}}</div>
                 <app-modal v-show="isModalVisible" @close="closeModal"></app-modal>
                 <b-form-select class="header__right-language"
                     v-model="selected"
@@ -35,6 +35,7 @@
 
 <script>
 import Modal from './Modal.vue';
+import $ from 'jquery';
 export default {
     props: {
         isChoice: {
@@ -59,6 +60,7 @@ export default {
         return {
             selected: 'English',
             isModalVisible: false,
+            addressUser: '',
         }
     },
     methods: {
@@ -81,10 +83,28 @@ export default {
                 return;
             }
             this.$emit('selectChoice', data);
-        }
+        },
+        changeConnect() {
+            if(this.addressUser != '') {
+                $('#idConnect').removeClass('header__right-connect-wallet').addClass('connectSuccess')
+                .prepend('<img src="src/assets/tronWallet.svg" style="width: 17px; display: inline-block; margin-right: 10px;">');
+            }
+        },
     },
     components: {
         appModal: Modal,
+    },
+    created() {
+        this.interval = setInterval(() => {
+            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                this.addressUser = window.tronWeb.defaultAddress.base58;
+            }
+        }, 1000);
+    },
+    updated() {
+        setTimeout(() => {
+            this.changeConnect();
+        }, 0);
     }
 }
 </script>
@@ -187,6 +207,22 @@ export default {
         .header__right-language {
             width: 6rem;
         }
+    }
+
+    .connectSuccess {
+        background: #fff;
+        border-radius: 5px;
+        font-size: 14px;
+        padding: 7px 30px;
+        color: #333;
+        text-align: center;
+        cursor: pointer;
+        margin-right: 2rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 160px;
+        transition: 0.3s all ease;
     }
 
     .menu__navbar-dropdown {

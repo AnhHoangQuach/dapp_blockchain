@@ -1,7 +1,8 @@
 <template>
     <div>
-        <vote-child v-if="currentComponent"></vote-child>
-        <div class="vote__list-container" v-else>
+        <vote-child v-if="currentComponent === 1"></vote-child>
+        <vote-child-after v-if="currentComponent === 2"></vote-child-after>
+        <div class="vote__list-container" v-if="currentComponent === 3">
             <div class="vote__list-title">Vote</div>
             <div class="vote__list-content">
                 <div class="role-tab">
@@ -27,11 +28,12 @@
 <script>
 import Closed from "./Closed.vue"
 import VoteChild from './VoteChild.vue';
+import VoteChildAfter from './VoteChildAfter.vue';
 export default {
     data: function() {
         return {
             isActive: true,
-            currentComponent: false,
+            currentComponent: 3,
         }
     },
     methods: {
@@ -41,7 +43,8 @@ export default {
     },
     components: {
         appClosed: Closed,
-        voteChild: VoteChild,
+        VoteChild,
+        VoteChildAfter
     }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="stake__content" v-on:receiveData="testData">
+    <div class="stake__content" v-on:receiveData="updateData">
         <div class="stake__content-intro">
             <h1>Today's a good day to sow SUN</h1>
             <h4>Stake TRX to participate in mining and earn SUN</h4>
@@ -8,6 +8,7 @@
         <div class="stake__page-content">
             <div class="stake__page-header">
                 <img src="src/assets/tronCoin.png" alt="">
+            
                 <span class="coin_stake">TRX pool</span>
             </div>
             <div class="stake__page-body">
@@ -38,7 +39,7 @@ export default {
     data: function() {
         return {
             showStakeModal: false,
-            coin_choice: {},
+            coinData: [],
         }
     },
     methods: {
@@ -51,13 +52,13 @@ export default {
         noStakeModal() {
             this.showStakeModal = false;
         },
-        testData(value) {
-            this.coin_choice = value;
+        updateData(value) {
+            this.coinData = value;
         }
     },
     components: {
         StakeModal,
-    }
+    },
 }
 </script>
 

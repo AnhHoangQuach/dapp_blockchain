@@ -14,6 +14,6 @@ export default new Router({
         { path: '/vote', name: 'Vote', component: Vote },
         { path: '/faq', name: 'Faq', component: Faq },
         { path: '/rules', name: 'Rule', component: MiningRules },
-        { path: '/stake', name: 'Stake', component: StakePage },
+        { path: '/stake/:id', name: 'Stake', component: StakePage},
     ]
 })

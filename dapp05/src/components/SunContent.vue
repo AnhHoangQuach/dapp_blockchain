@@ -174,11 +174,16 @@ export default {
         }
     },
     methods: {
-
+        sendData() {
+            this.$emit('receiveData', this.coins_transactions);
+        }
     },
     components: {
         appItem: Item,
         appEnded: Ended,
+    },
+    mounted() {
+        this.sendData();
     }
 }
 </script>

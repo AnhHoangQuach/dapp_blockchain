@@ -42,8 +42,8 @@
                         Get {{ (ele.id === parseInt(coins_transactions.length)) ? 'SUN' : (ele.id === parseInt(coins_transactions.length - 1)) ? 'TRX' : 'LP Token'}}
                     </a>
                 </div>
-                <router-link :to="{name: 'Stake'}" >
-                    <button class="sun__item-footer-button" :class="connectOk" @click="sendData(ele)">Select</button>
+                <router-link :to="{name: 'Stake', params: {id: ele.id}}">
+                    <button class="sun__item-footer-button" :class="connectOk">Select</button>
                 </router-link>
             </div>
         </div>
@@ -78,10 +78,6 @@ export default {
         changeCurrency(number) {
             return number.toLocaleString();
         },
-        sendData(ele) {
-            this.$emit('receiveData', ele);
-            console.log(ele);
-        }
     },
     components: {
         

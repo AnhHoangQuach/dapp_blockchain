@@ -34,6 +34,8 @@ export default {
         width: 80%;
         padding-top: 2.5rem;
         margin: 0 auto;
+        position: relative;
+        z-index: 10000;
     }
 
     .footer-contact a {

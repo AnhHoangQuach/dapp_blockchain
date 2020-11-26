@@ -38,11 +38,13 @@
             </div>
             <div class="sun__item-footer">
                 <div class="sun__item-footer-link">
-                    <a class="link-lp" href="https://justswap.io/?lang=en-US?tokenAddress=TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9&type=add#/home" target="">
+                    <a class="link-lp" href="https://justswap.io/?lang=en-US?tokenAddress=TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9&type=add#/home" target="_blank">
                         Get {{ (ele.id === parseInt(coins_transactions.length)) ? 'SUN' : (ele.id === parseInt(coins_transactions.length - 1)) ? 'TRX' : 'LP Token'}}
                     </a>
                 </div>
-                <button class="sun__item-footer-button">Select</button>
+                <router-link :to="{name: 'Stake'}" >
+                    <button class="sun__item-footer-button" :class="connectOk" @click="sendData(ele)">Select</button>
+                </router-link>
             </div>
         </div>
     </b-row>
@@ -59,18 +61,43 @@ export default {
     },
     data: function () {
         return {
-
+            addressUser: '',
         }
     },
     computed: {
-        
+        connectOk() {
+            if(this.addressUser) {
+                $('.sun__item-footer-button').css({
+                    backgroundColor: "#6726eb",
+                    color: "#fff",
+                })
+            }
+        }
     },
     methods: {
         changeCurrency(number) {
             return number.toLocaleString();
         },
+        sendData(ele) {
+            this.$emit('receiveData', ele);
+            console.log(ele);
+        }
+    },
+    components: {
+        
+    },
+    created() {
+        this.interval = setInterval(() => {
+            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                this.addressUser = window.tronWeb.defaultAddress.base58;
+            }
+        }, 1000);
     },
 }
+
+
+
+
 </script>
 
 <style lang="scss">

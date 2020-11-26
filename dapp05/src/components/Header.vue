@@ -6,24 +6,23 @@
             </div>
             <div class="menu">
                 <ul class="menu__navbar-list">
-                    <li v-for="(item) in listNavBar" :key="item.id">
-                        <div class="menu__navbar-list-item" @click="changeSelected(item, $event)" 
-                            :href="item.name" :class="{active: item.isActive}" >
-                            {{item.name}}
-                            <transition name="fade">
-                                <ul class="menu__navbar-dropdown">
-                                    <li v-for="(ele,index) in item.items" :key="index">
-                                        <a class="menu__navbar-dropdown-item" :href="ele.link" target="_blank">{{ele.name_link}}</a>
-                                    </li>
-                                </ul>
-                            </transition>
-                        </div>
+                    <router-link :to="{name: 'Sun'}" class="menu__navbar-list-item" exact>SUN</router-link>
+                    <router-link :to="{name: 'Vote'}" class="menu__navbar-list-item">Vote</router-link>
+                    <router-link :to="{name: 'Faq'}" class="menu__navbar-list-item">FAQs</router-link>
+                    <li class="menu__navbar-list-item">Learn
+                        <transition name="fade">
+                            <ul class="menu__navbar-dropdown">
+                                <a class="menu__navbar-dropdown-item" href="https://sun.io/docs/sun_whitepaper_en.pdf" target="_blank">WhitePaper</a>
+                                <a class="menu__navbar-dropdown-item" href="https://sun.io/docs/audit-report-sun_en.pdf" target="_blank">Audit</a>
+                            </ul>
+                        </transition>
                     </li>
                 </ul>
             </div>
             <div class="header__right">
                 <div id="idConnect" class="header__right-connect-wallet" @click="showModal">{{addressUser ? addressUser : 'Connect to Wallet'}}</div>
-                <app-modal v-show="isModalVisible" @close="closeModal"></app-modal>
+                <app-modal v-show="isModalVisible" @close="closeModal" v-if="addressUser === ''"></app-modal>
+                <modal-connect v-show="isModalVisible" @close="closeModal" v-else></modal-connect>
                 <b-form-select class="header__right-language"
                     v-model="selected"
                     :options="languages"
@@ -36,6 +35,7 @@
 <script>
 import Modal from './Modal.vue';
 import $ from 'jquery';
+import ModalConnect from './ModalConnect.vue';
 export default {
     props: {
         isChoice: {
@@ -86,13 +86,15 @@ export default {
         },
         changeConnect() {
             if(this.addressUser != '') {
-                $('#idConnect').removeClass('header__right-connect-wallet').addClass('connectSuccess')
-                .prepend('<img src="src/assets/tronWallet.svg" style="width: 17px; display: inline-block; margin-right: 10px;">');
+                $('#idConnect').prepend('<img src="src/assets/tronWallet.svg" style="width: 17px; display: inline-block; margin-right: 10px;">')
+                .removeClass('header__right-connect-wallet').addClass('connectSuccess')
+                $('#idConnect img:nth-child(2)').remove();
             }
         },
     },
     components: {
         appModal: Modal,
+        ModalConnect
     },
     created() {
         this.interval = setInterval(() => {
@@ -101,17 +103,15 @@ export default {
             }
         }, 1000);
     },
-    updated() {
-        setTimeout(() => {
-            this.changeConnect();
-        }, 0);
+    updated: function () {
+        this.changeConnect();
     }
 }
 </script>
 
 <style lang="scss" scoped>
 
-    .active {
+    .router-link-active {
         background-color: #6726eb;
     }
 
@@ -128,6 +128,9 @@ export default {
         text-decoration: none;
         color: #333;
         display: block;
+        margin: 20px 0;
+        height: 100%;
+        width: 100%;
     }
 
     .menu__navbar-dropdown-item:hover {

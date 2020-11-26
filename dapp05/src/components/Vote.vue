@@ -39,13 +39,13 @@ export default {
     methods: {
         updateParent(value) {
             this.currentComponent = value;
-        }
+        },
     },
     components: {
         appClosed: Closed,
         VoteChild,
-        VoteChildAfter
-    }
+        VoteChildAfter,
+    },
 }
 </script>
 

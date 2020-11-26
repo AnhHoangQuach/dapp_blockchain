@@ -114,7 +114,7 @@ export default {
         width: 56.25%;
         margin: 0 auto;
         position: relative;
-        z-index: 9999;
+        z-index: 1;
     }
 
     .about__list-title {

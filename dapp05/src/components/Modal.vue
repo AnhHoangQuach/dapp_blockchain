@@ -33,7 +33,7 @@
                 <div class="modal-container">
                     <div class="modal-body">
                         <div class="back-icon">
-                            <span>
+                            <span @click="loginSuccess = true">
                                 <img src="src/assets/back_icon.svg" alt="">
                             </span>
                         </div>
@@ -137,6 +137,7 @@ export default {
         top: 20px;
         width: 50px;
         text-align: left;
+        cursor: pointer;
     }
 
     .modal-mask {

@@ -52,7 +52,7 @@ export default {
     methods: {
         swapComponent(data) {
             this.$emit('changeComp', data);
-        }
+        },
     },
     components: {
         

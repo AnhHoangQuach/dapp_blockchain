@@ -15,7 +15,7 @@
                     <div class="sun__content-dashboard-info-title">
                         <img src="src/assets/stake.svg" alt="">
                         Total Staked Value
-                        <a href="" class="rules" target="_blank">Mining rules</a>
+                        <router-link :to="{name: 'Rule'}" class="rules">Mining rules</router-link>
                     </div>
                     <div class="sun__content-dashboard-info-mined_amount">
                         &asymp;
@@ -66,10 +66,10 @@ export default {
             coins_transactions: [
                 {
                     id: 1,
-                    coin_one: 'SUN',
-                    coin_two: 'TRX',
-                    coin_one_img: 'src/assets/sunCoin.png',
-                    coin_second_img: 'src/assets/tronCoin.png',
+                    coin_one: 'TRX',
+                    coin_two: 'SUN',
+                    coin_one_img: 'src/assets/tronCoin.png',
+                    coin_second_img: 'src/assets/sunCoin.png',
                     multi: 9,
                     total: 54319035319,
                     api: 36.66,
@@ -81,9 +81,9 @@ export default {
                 {
                     id: 2,
                     coin_one: 'USDT',
-                    coin_two: 'TRX',
+                    coin_two: 'SUN',
                     coin_one_img: 'src/assets/tCoin.png',
-                    coin_second_img: 'src/assets/tronCoin.png',
+                    coin_second_img: 'src/assets/sunCoin.png',
                     multi: 9,
                     total: 874055404,
                     api: 18.44,
@@ -94,10 +94,10 @@ export default {
                 },
                 {
                     id: 3,
-                    coin_one: 'JST',
-                    coin_two: 'TRX',
-                    coin_one_img: 'src/assets/uCoin.png',
-                    coin_second_img: 'src/assets/tronCoin.png',
+                    coin_one: 'SUN',
+                    coin_two: 'SUN',
+                    coin_one_img: 'src/assets/sunCoin.png',
+                    coin_second_img: 'src/assets/sunCoin.png',
                     multi: 4,
                     total: 630436190,
                     api: 21.17,

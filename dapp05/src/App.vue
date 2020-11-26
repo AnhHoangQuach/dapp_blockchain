@@ -1,11 +1,7 @@
 <template>
   <div id="app">
-    <app-header :listNavBar="listNavBar" :languages="languages" v-on:selectChoice="updateParent"></app-header>
-    <div>
-      <sun-content v-if="isChoice === 'SUN'"></sun-content>
-      <app-vote v-else-if="isChoice === 'Vote'"></app-vote>
-      <app-faq v-else-if="isChoice === 'FAQs'"></app-faq>
-    </div>
+    <app-header :listNavBar="listNavBar" :languages="languages"></app-header>
+    <router-view></router-view>
     <app-footer></app-footer>
   </div>
 </template>
@@ -53,7 +49,6 @@ export default {
           }
         ],
         languages: ['English', '日本語'],
-        isChoice: 'SUN',
       }
     },
     components: {
@@ -64,9 +59,7 @@ export default {
       appFaq: Faq,
     },
     methods: {
-      updateParent(value) {
-        this.isChoice = value;
-      }
+
     },
 }
 </script>

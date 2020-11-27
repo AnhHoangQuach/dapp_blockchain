@@ -43,7 +43,7 @@
                     </a>
                 </div>
                 <router-link :to="{name: 'Stake', params: {id: ele.id}}">
-                    <button class="sun__item-footer-button" :class="connectOk">Select</button>
+                    <button class="sun__item-footer-button" :class="connectOk" @click="addCoin(ele)">Select</button>
                 </router-link>
             </div>
         </div>
@@ -52,6 +52,7 @@
 
 <script>
 import $ from 'jquery';
+import {mapState, mapActions} from 'vuex'
 export default {
     props: {
         coins_transactions: {
@@ -78,6 +79,12 @@ export default {
         changeCurrency(number) {
             return number.toLocaleString();
         },
+        sendData(ele) {
+            this.$eventBus.$emit('emitted-data', this.coins_transactions[ele.id - 1]);
+        },
+        addCoin(ele) {
+            this.$store.state.coin_data = ele;
+        }
     },
     components: {
         

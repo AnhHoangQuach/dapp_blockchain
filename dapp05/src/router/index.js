@@ -7,7 +7,7 @@ import MiningRules from '../components/MiningRules.vue'
 import StakePage from '../components/StakePage.vue'
 
 Vue.use(Router)
-
+Vue.prototype.$eventBus = new Vue();
 export default new Router({
     routes: [
         { path: '/', name: 'Sun', component: SunContent },

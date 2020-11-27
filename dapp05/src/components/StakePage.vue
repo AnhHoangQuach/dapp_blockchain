@@ -1,5 +1,5 @@
 <template>
-    <div class="stake__content" v-on:receiveData="updateData">
+    <div class="stake__content">
         <div class="stake__content-intro">
             <h1>Today's a good day to sow SUN</h1>
             <h4>Stake TRX to participate in mining and earn SUN</h4>
@@ -7,23 +7,22 @@
         </div>
         <div class="stake__page-content">
             <div class="stake__page-header">
-                <img src="src/assets/tronCoin.png" alt="">
-            
-                <span class="coin_stake">TRX pool</span>
+                <img :src="dataReceive.coin_one_img" alt="">
+                <span class="coin_stake">{{dataReceive.coin_one}} pool</span>
             </div>
             <div class="stake__page-body">
                 <div class="stake__page-body-total">
                     <div class="stake__page-title">Total lock-ups</div>
-                    <p class="total__coin-staked">{{changeCurrency(123123123)}} TRX</p>
+                    <p class="total__coin-staked">{{changeCurrency(123123123)}} {{dataReceive.coin_one}}</p>
                 </div>
                 <div class="stake__page-body-staked">
                     <div class="stake__page-title">You have staked</div>
-                    <span class="stake__page-coin-staked">0 TRX</span>
+                    <span class="stake__page-coin-staked">0 {{dataReceive.coin_one}}</span>
                 </div>
             </div>
             <div class="stake__page-body-action">
-                <div class="stake_coin">Stake TRX</div>
-                <p class="earn_coin">Earn SUN</p>
+                <div class="stake_coin">Stake {{dataReceive.coin_one}}</div>
+                <p class="earn_coin">Earn {{dataReceive.default_coin}}</p>
             </div>
             <div class="stake__page-footer">
                 <button class="stake__page-footer-button" @click="showStakeModal = true">Genesis Mining</button>
@@ -39,7 +38,7 @@ export default {
     data: function() {
         return {
             showStakeModal: false,
-            coinData: [],
+            coins_data: {},
         }
     },
     methods: {
@@ -52,12 +51,21 @@ export default {
         noStakeModal() {
             this.showStakeModal = false;
         },
-        updateData(value) {
-            this.coinData = value;
+
+    },
+    computed: {
+        dataReceive() {
+            return this.$store.state.coin_data;
         }
     },
     components: {
         StakeModal,
+    },
+    mounted() {
+        this.$eventBus.$on('emitted-data', (value) => {
+            this.coins_data = value;
+            console.log(this.coins_data);
+        })
     },
 }
 </script>

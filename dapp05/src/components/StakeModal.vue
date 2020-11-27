@@ -16,15 +16,21 @@
                             <div class="claim_action">Claim</div>
                         </div>
                         <div class="modal-body-title">
-                            Enter the amount of TRX you want to stake
+                            Enter the amount of {{dataReceive.coin_one}} you want to stake
                         </div>
                         <div class="modal-body-input">
-                            <input type="text" id="amountStake" required>TRX
+                            <input type="text" id="amountStake" required>{{dataReceive.coin_one}}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <p class="trx_balance">TRX Balance: 123 TRX</p>
-                        <button class="modal_stake-footer-button" @click="stakeCoin">Stake</button>
+                        <p class="trx_balance">{{dataReceive.coin_one}} Balance: 
+                           {{roundFloat(getBalanceCoin(dataReceive.address_coin),5)}} {{dataReceive.coin_one}}
+                        </p>
+                        <button
+                            class="modal_stake-footer-button" 
+                            @click="stakeCoin(dataReceive.address_coin)"
+                        >Stake
+                        </button>
                     </div>
                 </div>
             </div>
@@ -38,31 +44,61 @@ export default {
     data: function() {
         return {
             addressUser: '',
+            trc20ContractAddress: 'TQszzMYsHo5o6XCDigDVKMT7W95kb2wW6G',
+            balanceCoin: 0,
         }
     },
     methods: {
         close() {
             this.$emit('close');
         },
-        async stakeCoin() {
-            // TPEk47xBDFBatPpJ1EyiqxS4T2BiWcuzQw coin HoangAnh
-            const trc20ContractAddress = "TVw1aFG87XX2Jp65irJavXvMx1BgMbmEa9"; //contract address
-            var address = this.addressUser; 
+
+        async stakeCoin(addressCoin) {
             var amountStake = parseInt(document.getElementById('amountStake').value);
-            try {
-                let contract = await tronWeb.contract().at(trc20ContractAddress);
-                //Use call to execute a pure or view smart contract method.
-                // These methods do not modify the blockchain, do not cost anything to execute and are also not broadcasted to the network.
-                let result = await contract.stake(
-                    
-                    amountStake
-                ).send({
-                    feeLimit: 5000000
-                }).then(output => {console.log('- Output:', output, '\n');});
-            } catch(error) {
-                console.error("trigger smart contract error",error)
+            if(addressCoin === this.addressUser) {            
+                try {
+                    let contract = await tronWeb.contract().at(this.trc20ContractAddress);
+                    let result = await contract.stakeTRX().send({
+                        feeLimit: 9000000
+                    }).then(output => {console.log('- Output:', output, '\n');});
+                } catch (error) {
+                    console.error("trigger smart contract error", error)
+                }
+            } else {
+                try {
+                    let contract = await tronWeb.contract().at(this.trc20ContractAddress);
+                    let result = await contract.stake(
+                        addressCoin, amountStake
+                    ).send({
+                        feeLimit: 9000000
+                    }).then(output => {console.log('- Output:', output, '\n');});
+                } catch (error) {
+                    console.error("trigger smart contract error", error)
+                }
             }
         },
+
+        getBalanceCoin(addressCoin) {
+            var p = Promise.resolve(window.tronWeb.trx.getBalance(addressCoin));
+            p.then(result => {
+                this.balanceCoin = result;
+            })
+            return this.balanceCoin / Math.pow(10,6);
+        },
+
+        roundFloat(num,dec) {
+            var d = 1;
+            for (var i=0; i<dec; i++){
+                d += "0";
+            }
+            return Math.round(num * d) / d;
+        }
+    },
+    computed: {
+        dataReceive() {
+            return this.$store.state.coin_data;
+        }
+        
     },
     created() {
         this.interval = setInterval(() => {
@@ -116,6 +152,10 @@ export default {
         display: block;
         margin: 13px auto 0;
         border: none;
+    }
+
+    *:focus {
+        outline: 0;
     }
 
     .modal-body-action {

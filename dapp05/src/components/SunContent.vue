@@ -77,6 +77,7 @@ export default {
                     total_stacked_coin_two: 543290451,
                     pool_supply: 19157,
                     default_coin: 'SUN',
+                    address_coin: 'TSdsR76MsXPTksniSuFx4J1o4VivVNdvyM', // dia chi vi cua minh
                 },
                 {
                     id: 2,
@@ -91,6 +92,7 @@ export default {
                     total_stacked_coin_two: 1079987366,
                     pool_supply: 19157,
                     default_coin: 'SUN',
+                    address_coin: 'THYJ9cra1qQci6DcxFf4F4nZd2pMfD3RMp', // dia chi contract usdt
                 },
                 {
                     id: 3,
@@ -105,6 +107,7 @@ export default {
                     total_stacked_coin_two: 418063347,
                     pool_supply: 8514,
                     default_coin: 'SUN',
+                    address_coin: 'TQszzMYsHo5o6XCDigDVKMT7W95kb2wW6G', // dia chi contract bank token
                 },
                 {
                     id: 4,
@@ -174,17 +177,13 @@ export default {
         }
     },
     methods: {
-        sendData() {
-            this.$emit('receiveData', this.coins_transactions);
-        }
+
     },
     components: {
         appItem: Item,
         appEnded: Ended,
     },
-    mounted() {
-        this.sendData();
-    }
+    
 }
 </script>
 

@@ -155,13 +155,13 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
     }
 
     // hàm riêng stakeTRX
-    function stakeTRX(uint256 amount) public returns (bool) {
-        transferFrom(msg.sender,address(this), amount);
-        _stake[msg.sender][msg.sender] += amount;
+    function stakeTRX() public payable returns (bool) {
+        transferFrom(msg.sender,address(this), msg.value / 10**6);
+        _stake[msg.sender][msg.sender] += msg.value;
         stakingInfo memory stk;
         stk.spawnDate = now;
         stk.stakeDate  = now;
-        stk.amount = amount;
+        stk.amount = msg.value;
         stk.spareTime = 0;
         UserMap[msg.sender][msg.sender].push(stk);
         return true;

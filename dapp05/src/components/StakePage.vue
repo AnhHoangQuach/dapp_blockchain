@@ -17,7 +17,7 @@
                 </div>
                 <div class="stake__page-body-staked">
                     <div class="stake__page-title">You have staked</div>
-                    <span class="stake__page-coin-staked">0 {{dataReceive.coin_one}}</span>
+                    <span class="stake__page-coin-staked" @click="stakedCoin('TMqm7Veq8PNzDVpThoC78Sfy3db8UoxJet')">{{stakedAddressCoin}} {{dataReceive.coin_one}}</span>
                 </div>
             </div>
             <div class="stake__page-body-action">
@@ -39,6 +39,7 @@ export default {
         return {
             showStakeModal: false,
             coins_data: {},
+            stakedAddressCoin: 0,
         }
     },
     methods: {
@@ -51,7 +52,11 @@ export default {
         noStakeModal() {
             this.showStakeModal = false;
         },
-
+        async stakedCoin(addressCoin){
+            let contract = await window.tronWeb.contract().at(addressCoin);
+            await contract.balanceOfStake("TMdRkPYDZZrt5S6uSSDHi4yidP3WrqEaTF").call()
+            .then(result => this.stakedAddressCoin = parseInt(result._hex) / 100)
+        },
     },
     computed: {
         dataReceive() {

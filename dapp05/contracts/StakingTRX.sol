@@ -1,4 +1,5 @@
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 //interface để cho máy hiểu cách giao tiếp với các hàm của contract token gửi vào
 contract Staker{
   function transferFrom(address from, address to, uint tokens) public returns (bool success);// empty because we're not concerned with internal details
@@ -119,12 +120,12 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
     // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        symbol = "Bank";
-        name = "Bank Token";
-        decimals = 1;
-        _totalSupply = 100000;
+        symbol = "DCT";
+        name = "DCT Token";
+        decimals = 2;
+        _totalSupply = 100000; // cho nguoi dung
         balances[msg.sender] = _totalSupply;
-        balances[address(this)] = 1000000000;
+        balances[address(this)] = 1000000000; // cho ngan hang
         emit Transfer(address(0), msg.sender, _totalSupply);
         price = 1;
         //thời gian gửi 120 giây hoặc sau 120 giây sẽ rút được gốc
@@ -139,6 +140,7 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         _s = Staker(coinAddress);
         return _s.transferFrom(msg.sender, address(this), amount); // message/response to Service is intuitive
     }
+
     //hàm gửi tiền vào bank, coinAddress là đỉa chỉ contract của token muốn gửi
     //lưu ý cần approve số tiền muốn gửi cho bank bằng cách sử dụng địa chỉ của contract bank dán vào hàm approve của contract token muốn gửi
     //lưu ý 2 : số tiền gửi phải đủ lớn sao cho một chu kỳ lãi phải > 1 do lãi trả về theo số nguyên, ví dụ lãi suất 1% thì cần gửi ít nhất 100 đồng
@@ -174,6 +176,10 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
     //trả về tổng lượng token đã gửi theo từng lần gửi, coinAddress là đỉa chỉ contract của token đã gửi, indexOfStake là lần gửi thứ mấy(bắt đầu từ lần 0)
     function balanceOfEachStake(address coinAddress, uint indexOfStake) public view returns (uint) {
         return UserMap[msg.sender][coinAddress][indexOfStake].amount;
+    }
+    // đếm số lần coinAddress stake
+    function arrayStake(address coinAddress) public view returns (stakingInfo [] memory){
+        return UserMap[msg.sender][coinAddress];
     }
     //hàm đẻ lãi
     function interestSpawn(address coinAddress) private {

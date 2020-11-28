@@ -249,6 +249,6 @@ contract CommonToken is Token {
 
 contract NCToken is CommonToken {
 
-  constructor() CommonToken("Soli4", "Solidity4", 0, 1000) public {}
+  constructor() CommonToken("TestUSDT", "USDT", 0, 10000) public {}
 
 }

@@ -21,16 +21,19 @@
                         <div class="modal-body-input">
                             <input type="text" id="amountStake" required>{{dataReceive.coin_one}}
                         </div>
+                        <div class="button_max" @click="getBalanceOfToken(dataReceive.address_coin)">MAX</div>
                     </div>
                     <div class="modal-footer">
                         <p class="trx_balance">{{dataReceive.coin_one}} Balance: 
-                           {{roundFloat(getBalanceCoin(dataReceive.address_coin),5)}} {{dataReceive.coin_one}}
+                           {{dataReceive.coin_one === 'TRX' ? getCoinTRX(dataReceive.address_coin) : getBalanceCoin(dataReceive.address_coin) ? roundFloat(balanceCoinAnother, 5) : ''}}
+                            {{dataReceive.coin_one}}
                         </p>
                         <button
                             class="modal_stake-footer-button" 
                             @click="stakeCoin(dataReceive.address_coin)"
                         >Stake
                         </button>
+                        <button @click="arrayStake">fasfasfasfsf</button>
                     </div>
                 </div>
             </div>
@@ -44,8 +47,9 @@ export default {
     data: function() {
         return {
             addressUser: '',
-            trc20ContractAddress: 'TQszzMYsHo5o6XCDigDVKMT7W95kb2wW6G',
+            trc20ContractAddress: 'TMqm7Veq8PNzDVpThoC78Sfy3db8UoxJet',
             balanceCoin: 0,
+            balanceCoinAnother: 0,
         }
     },
     methods: {
@@ -55,35 +59,29 @@ export default {
 
         async stakeCoin(addressCoin) {
             var amountStake = parseInt(document.getElementById('amountStake').value);
-            if(addressCoin === this.addressUser) {            
+            if(addressCoin != this.addressUser) { 
                 try {
                     let contract = await tronWeb.contract().at(this.trc20ContractAddress);
-                    let result = await contract.stakeTRX().send({
+                    let result = await contract.stake(
+                        addressCoin,
+                        amountStake * 100
+                    ).send({
                         feeLimit: 9000000
                     }).then(output => {console.log('- Output:', output, '\n');});
                 } catch (error) {
                     console.error("trigger smart contract error", error)
-                }
-            } else {
+                }                     
+            } else {   
                 try {
                     let contract = await tronWeb.contract().at(this.trc20ContractAddress);
-                    let result = await contract.stake(
-                        addressCoin, amountStake
-                    ).send({
+                    let result = await contract.stakeTRX().send({
+                        callValue: amountStake * Math.pow(10,6),
                         feeLimit: 9000000
                     }).then(output => {console.log('- Output:', output, '\n');});
                 } catch (error) {
                     console.error("trigger smart contract error", error)
                 }
             }
-        },
-
-        getBalanceCoin(addressCoin) {
-            var p = Promise.resolve(window.tronWeb.trx.getBalance(addressCoin));
-            p.then(result => {
-                this.balanceCoin = result;
-            })
-            return this.balanceCoin / Math.pow(10,6);
         },
 
         roundFloat(num,dec) {
@@ -92,7 +90,38 @@ export default {
                 d += "0";
             }
             return Math.round(num * d) / d;
-        }
+        },
+
+        getCoinTRX(addressCoin) {
+            var p = Promise.resolve(window.tronWeb.trx.getBalance(addressCoin));
+            p.then(result => {
+                this.balanceCoin = result;
+            })
+            return this.balanceCoin / Math.pow(10,6)
+        },
+
+        async getBalanceCoin(addressCoin) {
+            let contract = await window.tronWeb.contract().at(addressCoin);
+            await contract.balanceOf("TZ6u76fTzpGaE2MwcwzCVGbmxvmPLbSaHv").call()
+            .then(result => this.balanceCoinAnother = parseInt(result.balance._hex) / Math.pow(10,2));
+        },
+
+        async getBalanceOfToken(addressCoin){
+            if(addressCoin === this.addressUser) {
+                document.getElementById('amountStake').value = this.getBalanceCoin(addressCoin);
+            } else {
+                let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+                await contract.balanceOf(addressCoin).call()
+                .then(result => document.getElementById('amountStake').innerHTML = result)
+            }
+        },
+
+        async arrayStake() {
+            let contract = await window.tronWeb.contract().at('TUqn9hspkkpWrBk8PHkNLykSm18g43EqMc');
+            await contract.UserMap.then(function(result){
+                console.log(result)
+            });
+        },
     },
     computed: {
         dataReceive() {
@@ -111,6 +140,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+    .button_max {
+        background: #6726eb;
+        border-radius: 10px;
+        height: 40px;
+        line-height: 40px;
+        font-family: HelveticaNeue;
+        font-size: 12px;
+        color: #fff;
+        letter-spacing: 0;
+        text-align: center;
+        margin: 13px auto 0;
+        border: none;
+        width: 100px;
+        cursor: pointer;
+    }
+
     .trx_balance {
         font-size: 14px;
     }

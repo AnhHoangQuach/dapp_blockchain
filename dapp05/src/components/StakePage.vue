@@ -17,7 +17,7 @@
                 </div>
                 <div class="stake__page-body-staked">
                     <div class="stake__page-title">You have staked</div>
-                    <span class="stake__page-coin-staked" @click="stakedCoin('TMqm7Veq8PNzDVpThoC78Sfy3db8UoxJet')">{{stakedAddressCoin}} {{dataReceive.coin_one}}</span>
+                    <span class="stake__page-coin-staked">{{stakedAddressCoin}} {{dataReceive.coin_one}}</span>
                 </div>
             </div>
             <div class="stake__page-body-action">
@@ -40,6 +40,8 @@ export default {
             showStakeModal: false,
             coins_data: {},
             stakedAddressCoin: 0,
+            addressUser: '',
+            trc20ContractAddress: 'TWYzBgmLtiFTBFnoXjeK6f3Cvmt9KG46sR',
         }
     },
     methods: {
@@ -53,9 +55,14 @@ export default {
             this.showStakeModal = false;
         },
         async stakedCoin(addressCoin){
-            let contract = await window.tronWeb.contract().at(addressCoin);
-            await contract.balanceOfStake("TMdRkPYDZZrt5S6uSSDHi4yidP3WrqEaTF").call()
-            .then(result => this.stakedAddressCoin = parseInt(result._hex) / 100)
+            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+            await contract.balanceOfStake(addressCoin).call()
+            .then(result => this.stakedAddressCoin = parseInt(result._hex) / Math.pow(10,2))
+        },
+        async takeAddress() {
+            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                this.addressUser = window.tronWeb.defaultAddress.base58;
+            }
         },
     },
     computed: {
@@ -66,11 +73,15 @@ export default {
     components: {
         StakeModal,
     },
+    created() {
+        this.takeAddress();
+    },
     mounted() {
         this.$eventBus.$on('emitted-data', (value) => {
             this.coins_data = value;
             console.log(this.coins_data);
         })
+        this.stakedCoin(this.dataReceive.address_coin);
     },
 }
 </script>

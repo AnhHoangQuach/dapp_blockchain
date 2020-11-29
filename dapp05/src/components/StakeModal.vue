@@ -30,18 +30,19 @@
                         </p>
                         <button
                             class="modal_stake-footer-button" 
-                            @click="stakeCoin(dataReceive.address_coin)"
+                            @click="stakeCoin(dataReceive.address_coin), showStakeSuccess()"
                         >Stake
                         </button>
+                        <stake-success v-if="stakeSuccess" @closeParent="noStakeSuccess" :amountInputStake="amountInputStake" :transactionCode="transactionCode"></stake-success>
                     </div>
                 </div>
             </div>
-            
         </transition> 
     </div>
 </template>
 
 <script>
+import StakeSuccess from './StakeSuccess.vue'
 export default {
     data: function() {
         return {
@@ -49,15 +50,30 @@ export default {
             trc20ContractAddress: 'TWYzBgmLtiFTBFnoXjeK6f3Cvmt9KG46sR',
             balanceCoin: 0,
             balanceCoinAnother: 0,
+            stakeSuccess: false,
+            amountInputStake: 0,
+            transactionCode: 'https://shasta.tronscan.org/#/transaction/'
         }
     },
     methods: {
         close() {
             this.$emit('close');
         },
+        
+        showStakeSuccess() {
+            setTimeout(() => {
+                this.stakeSuccess = true;
+            },5000)
+        },
+
+        noStakeSuccess(value) {
+            this.stakeSuccess = value.test;
+            this.transactionCode = value.transactionCode
+        },
 
         async stakeCoin(addressCoin) {
             var amountStake = parseInt(document.getElementById('amountStake').value);
+            this.amountInputStake = amountStake;
             if(addressCoin != this.addressUser) { 
                 try {
                     let contract = await tronWeb.contract().at(this.trc20ContractAddress);
@@ -66,11 +82,14 @@ export default {
                         amountStake * 100
                     ).send({
                         feeLimit: 10000000
-                    }).then(output => {console.log('- Output:', output, '\n');});
+                    }).then(output => {
+                        console.log('- Output:', output, '\n');
+                        this.transactionCode += output;
+                    });
                 } catch (error) {
                     console.error("trigger smart contract error", error)
                 }                     
-            } else {   
+            } else {
                 try {
                     let contract = await tronWeb.contract().at(this.trc20ContractAddress);
                     let result = await contract.stakeTRX().send({
@@ -126,6 +145,9 @@ export default {
             return this.$store.state.coin_data;
         }
         
+    },
+    components: {
+        StakeSuccess
     },
     created() {
         this.takeAddress();

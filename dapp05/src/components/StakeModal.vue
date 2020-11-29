@@ -33,7 +33,6 @@
                             @click="stakeCoin(dataReceive.address_coin)"
                         >Stake
                         </button>
-                        <button @click="arrayStake">fasfasfasfsf</button>
                     </div>
                 </div>
             </div>
@@ -47,7 +46,7 @@ export default {
     data: function() {
         return {
             addressUser: '',
-            trc20ContractAddress: 'TMqm7Veq8PNzDVpThoC78Sfy3db8UoxJet',
+            trc20ContractAddress: 'TWYzBgmLtiFTBFnoXjeK6f3Cvmt9KG46sR',
             balanceCoin: 0,
             balanceCoinAnother: 0,
         }
@@ -66,7 +65,7 @@ export default {
                         addressCoin,
                         amountStake * 100
                     ).send({
-                        feeLimit: 9000000
+                        feeLimit: 10000000
                     }).then(output => {console.log('- Output:', output, '\n');});
                 } catch (error) {
                     console.error("trigger smart contract error", error)
@@ -76,7 +75,7 @@ export default {
                     let contract = await tronWeb.contract().at(this.trc20ContractAddress);
                     let result = await contract.stakeTRX().send({
                         callValue: amountStake * Math.pow(10,6),
-                        feeLimit: 9000000
+                        feeLimit: 10000000
                     }).then(output => {console.log('- Output:', output, '\n');});
                 } catch (error) {
                     console.error("trigger smart contract error", error)
@@ -102,25 +101,24 @@ export default {
 
         async getBalanceCoin(addressCoin) {
             let contract = await window.tronWeb.contract().at(addressCoin);
-            await contract.balanceOf("TZ6u76fTzpGaE2MwcwzCVGbmxvmPLbSaHv").call()
+            await contract.balanceOf(this.addressUser).call()
             .then(result => this.balanceCoinAnother = parseInt(result.balance._hex) / Math.pow(10,2));
         },
 
         async getBalanceOfToken(addressCoin){
             if(addressCoin === this.addressUser) {
-                document.getElementById('amountStake').value = this.getBalanceCoin(addressCoin);
+                document.getElementById('amountStake').value = this.getCoinTRX(addressCoin)
             } else {
-                let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
-                await contract.balanceOf(addressCoin).call()
-                .then(result => document.getElementById('amountStake').innerHTML = result)
+                let contract = await window.tronWeb.contract().at(addressCoin);
+                await contract.balanceOf(this.addressUser).call()
+                .then(result => document.getElementById('amountStake').value = parseInt(result.balance._hex) / Math.pow(10,2));
             }
         },
 
-        async arrayStake() {
-            let contract = await window.tronWeb.contract().at('TUqn9hspkkpWrBk8PHkNLykSm18g43EqMc');
-            await contract.UserMap.then(function(result){
-                console.log(result)
-            });
+        async takeAddress() {
+            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                this.addressUser = window.tronWeb.defaultAddress.base58;
+            }
         },
     },
     computed: {
@@ -130,11 +128,7 @@ export default {
         
     },
     created() {
-        this.interval = setInterval(() => {
-            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-                this.addressUser = window.tronWeb.defaultAddress.base58;
-            }
-        }, 1000);
+        this.takeAddress();
     },
 }
 </script>

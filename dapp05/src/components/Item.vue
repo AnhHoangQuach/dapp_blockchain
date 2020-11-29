@@ -43,7 +43,7 @@
                     </a>
                 </div>
                 <router-link :to="{name: 'Stake', params: {id: ele.id}}">
-                    <button class="sun__item-footer-button" :class="connectOk" @click="addCoin(ele)">Select</button>
+                    <button class="sun__item-footer-button" :class="connectOk" @click="addCoin(ele)" :disabled="addressUser === ''">Select</button>
                 </router-link>
             </div>
         </div>
@@ -104,6 +104,10 @@ export default {
 </script>
 
 <style lang="scss">
+
+    a:hover {
+        text-decoration: none;
+    } 
 
     .sun__content-dashboard-item{
         width: 360px;

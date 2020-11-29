@@ -1,5 +1,4 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2;
 //interface để cho máy hiểu cách giao tiếp với các hàm của contract token gửi vào
 contract Staker{
   function transferFrom(address from, address to, uint tokens) public returns (bool success);// empty because we're not concerned with internal details
@@ -120,8 +119,8 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
     // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        symbol = "DCT";
-        name = "DCT Token";
+        symbol = "Bank";
+        name = "Bank Token";
         decimals = 2;
         _totalSupply = 100000; // cho nguoi dung
         balances[msg.sender] = _totalSupply;
@@ -178,8 +177,8 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         return UserMap[msg.sender][coinAddress][indexOfStake].amount;
     }
     // đếm số lần coinAddress stake
-    function arrayStake(address coinAddress) public view returns (stakingInfo [] memory){
-        return UserMap[msg.sender][coinAddress];
+    function arrayStake(address coinAddress) public view returns (uint){
+        return UserMap[msg.sender][coinAddress].length;
     }
     //hàm đẻ lãi
     function interestSpawn(address coinAddress) private {

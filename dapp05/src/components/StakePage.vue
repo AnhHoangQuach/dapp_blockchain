@@ -41,7 +41,7 @@ export default {
             coins_data: {},
             stakedAddressCoin: 0,
             addressUser: '',
-            trc20ContractAddress: 'TWYzBgmLtiFTBFnoXjeK6f3Cvmt9KG46sR',
+            trc20ContractAddress: 'TCUv4Lo5XQF8cpqLD7jx65F64fyuQC28X5',
         }
     },
     methods: {
@@ -57,7 +57,13 @@ export default {
         async stakedCoin(addressCoin){
             let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
             await contract.balanceOfStake(addressCoin).call()
-            .then(result => this.stakedAddressCoin = parseInt(result._hex) / Math.pow(10,2))
+            .then(result => {
+                if(addressCoin === this.addressUser) {
+                    this.stakedAddressCoin = parseInt(result._hex) / Math.pow(10,6)
+                } else {
+                    this.stakedAddressCoin = parseInt(result._hex) / Math.pow(10,2)
+                }
+            })
         },
         async takeAddress() {
             if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
@@ -83,6 +89,9 @@ export default {
         })
         this.stakedCoin(this.dataReceive.address_coin);
     },
+    updated() {
+        this.stakedCoin(this.dataReceive.address_coin);
+    }
 }
 </script>
 

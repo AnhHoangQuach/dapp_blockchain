@@ -1,44 +1,99 @@
 <template>
-    <div class="stake__modal-action">
-        <transition name="move">
-            <div class="modal-mask">
-                <div class="modal-mask-container">
-                    <div class="modal-header">
-                        <div class="modal-header__title">Action</div>
-                        <div class="modal-default-button" @click="close">
-                            <img src="src/assets/iconDelete.png" alt="">
+    <div>
+        <div class="stake__modal-action" v-if="!isClaim">
+            <transition name="move">
+                <div class="modal-mask">
+                    <div class="modal-mask-container">
+                        <div class="modal-header">
+                            <div class="modal-header__title">Action</div>
+                            <div class="modal-default-button" @click="close">
+                                <img src="src/assets/iconDelete.png" alt="">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="modal-body">
-                        <div class="modal-body-action">
-                            <div class="stake_action">Stake</div>
-                            <div class="claim_action">Claim</div>
+                        <div class="modal-body">
+                            <div class="modal-body-action">
+                                <div class="stake_action" @click="isClaim = false">Stake</div>
+                                <div class="claim_action" @click="isClaim = true">Claim</div>
+                            </div>
+                            <div class="modal-body-title">
+                                Enter the amount of {{dataReceive.coin_one}} you want to stake
+                            </div>
+                            <div class="modal-body-input">
+                                <input type="text" id="amountStake" required>{{dataReceive.coin_one}}
+                            </div>
+                            <div class="button_max" @click="getBalanceOfToken(dataReceive.address_coin)">MAX</div>
                         </div>
-                        <div class="modal-body-title">
-                            Enter the amount of {{dataReceive.coin_one}} you want to stake
+                        <div class="modal-footer">
+                            <p class="trx_balance">{{dataReceive.coin_one}} Balance: 
+                            {{dataReceive.coin_one === 'TRX' ? getCoinTRX(dataReceive.address_coin) : getBalanceCoin(dataReceive.address_coin) ? roundFloat(balanceCoinAnother, 5) : ''}}
+                                {{dataReceive.coin_one}}
+                            </p>
+                            <button
+                                class="modal_stake-footer-button" 
+                                @click="stakeCoin(dataReceive.address_coin), showStakeSuccess()"
+                            >Stake
+                            </button>
+                            <stake-success v-if="stakeSuccess" @closeParent="noStakeSuccess" :amountInputStake="amountInputStake" :transactionCode="transactionCode"></stake-success>
                         </div>
-                        <div class="modal-body-input">
-                            <input type="text" id="amountStake" required>{{dataReceive.coin_one}}
-                        </div>
-                        <div class="button_max" @click="getBalanceOfToken(dataReceive.address_coin)">MAX</div>
-                    </div>
-                    <div class="modal-footer">
-                        <p class="trx_balance">{{dataReceive.coin_one}} Balance: 
-                           {{dataReceive.coin_one === 'TRX' ? getCoinTRX(dataReceive.address_coin) : getBalanceCoin(dataReceive.address_coin) ? roundFloat(balanceCoinAnother, 5) : ''}}
-                            {{dataReceive.coin_one}}
-                        </p>
-                        <button
-                            class="modal_stake-footer-button" 
-                            @click="stakeCoin(dataReceive.address_coin), showStakeSuccess()"
-                        >Stake
-                        </button>
-                        <stake-success v-if="stakeSuccess" @closeParent="noStakeSuccess" :amountInputStake="amountInputStake" :transactionCode="transactionCode"></stake-success>
                     </div>
                 </div>
-            </div>
-        </transition> 
+            </transition>
+        </div>
+        <div class="claim__modal-action" v-else>
+            <transition name="move">
+                <div class="modal-mask">
+                    <div class="modal-mask-container">
+                        <div class="modal-header">
+                            <div class="modal-header__title">Action</div>
+                            <div class="modal-default-button" @click="close">
+                                <img src="src/assets/iconDelete.png" alt="">
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="modal-body-action">
+                                <div class="claim_action" @click="isClaim = false">Stake</div>
+                                <div class="stake_action" @click="isClaim = true">Claim</div>
+                            </div>
+                            <div class="modal-body-title">
+                                Enter the amount of {{dataReceive.coin_one}} you want to claim
+                            </div>
+                            <div class="modal-body-input">
+                                <input type="text" id="amountStake" required>{{dataReceive.coin_one}}
+                            </div>
+                            <div class="showTransaction" @click="showEachStaked(dataReceive.address_coin)"> 
+                                <div class="showTransaction-title">Transaction: {{timesOfTransaction}}</div>
+                                <ul class="showTransaction-list">
+                                    <li class="showTransaction-list-item" v-for="index in timesOfTransaction" :key="index">
+                                        <div class="showTransaction-list-item-content">
+                                            <span>Staked {{index}}: </span>
+                                            <span></span>
+                                            <button
+                                                class="button_stakeCoin"
+                                            >WithDraw
+                                            </button>
+                                            <button
+                                                class="button_stakeCoin" 
+                                            >Unstaking
+                                            </button>
+                                        </div>
+                                    </li>                                    
+                                </ul>
+                            </div>
+                            <div class="button_max" @click="getBalanceOfToken(dataReceive.address_coin)">MAX</div>
+                        </div>
+                        <div class="modal-footer">
+                            <p class="trx_balance">{{dataReceive.coin_one}} Staked: 
+                                {{coinStaked}} {{dataReceive.coin_one}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
     </div>
+    
 </template>
 
 <script>
@@ -47,15 +102,48 @@ export default {
     data: function() {
         return {
             addressUser: '',
-            trc20ContractAddress: 'TWYzBgmLtiFTBFnoXjeK6f3Cvmt9KG46sR',
+            trc20ContractAddress: 'TCUv4Lo5XQF8cpqLD7jx65F64fyuQC28X5',
             balanceCoin: 0,
             balanceCoinAnother: 0,
             stakeSuccess: false,
             amountInputStake: 0,
-            transactionCode: 'https://shasta.tronscan.org/#/transaction/'
+            transactionCode: 'https://shasta.tronscan.org/#/transaction/',
+            isClaim: false,
+            coinStaked: 0,
+            timesOfTransaction: 0,
+            withDrawFullTransaction: 0,
+            eachStakeCoin: 0,
         }
     },
     methods: {
+        async showEachStaked(addressCoin) {
+            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+            await contract.arrayStake(addressCoin).call()
+            .then(result => {
+                this.timesOfTransaction = parseInt(result._hex);
+            })
+        },
+
+        async stakedCoin(addressCoin){
+            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+            await contract.balanceOfStake(addressCoin).call()
+            .then(result => {
+                if(addressCoin === this.addressUser) {
+                    this.coinStaked = parseInt(result._hex) / Math.pow(10,6)
+                } else {
+                    this.coinStaked = parseInt(result._hex) / Math.pow(10,2)
+                }
+            })
+        },
+
+        async eachStake(addressCoin, test) {
+            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+            await contract.balanceOfEachStake(addressCoin, test).call()
+            .then(result => {
+                document.querySelector(".showTransaction-list-item-content span:nth-child(2)").innerHTML = parseInt(result._hex)
+            })
+        },
+
         close() {
             this.$emit('close');
         },
@@ -143,8 +231,7 @@ export default {
     computed: {
         dataReceive() {
             return this.$store.state.coin_data;
-        }
-        
+        },
     },
     components: {
         StakeSuccess
@@ -152,10 +239,66 @@ export default {
     created() {
         this.takeAddress();
     },
+    updated() {
+        this.stakedCoin(this.dataReceive.address_coin)
+        this.showEachStaked(this.dataReceive.address_coin)
+    }
 }
 </script>
 
 <style lang="scss" scoped>
+    .button_stakeCoin {
+        background: #6726eb;
+        border-radius: 10px;
+        line-height: 30px;
+        font-family: HelveticaNeue;
+        font-size: 12px;
+        color: #fff;
+        letter-spacing: 0;
+        text-align: center;
+        margin: 0 5px;
+        border: none;
+        width: 70px;
+        cursor: pointer;
+    }
+
+    .showTransaction-list-item {
+        margin: 8px 0;
+    }
+
+    .showTransaction-list {
+        list-style-type: none;   
+        padding: 0;
+    }
+
+    .showTransaction-list-item-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .showTransaction-list-item-content > span {
+        padding: 0 5px;
+    }
+
+    .claim__modal-action .modal-body-title {
+        margin: 20px;
+    }
+
+    .claim__modal-action .modal-footer {
+        margin: 0;
+    }
+
+    .claim__modal-action .modal-mask-container {
+        height: 550px;
+        max-height: 600px;
+    }
+
+    .showTransaction-title {
+        text-align: left;
+        padding: 10px 0;
+    }
+
     .button_max {
         background: #6726eb;
         border-radius: 10px;
@@ -166,7 +309,7 @@ export default {
         color: #fff;
         letter-spacing: 0;
         text-align: center;
-        margin: 13px auto 0;
+        margin: 15px auto 0;
         border: none;
         width: 100px;
         cursor: pointer;
@@ -190,6 +333,7 @@ export default {
         width: 80%;
         margin: 0 auto;
     }
+
 
     .modal-footer {
         border: none;

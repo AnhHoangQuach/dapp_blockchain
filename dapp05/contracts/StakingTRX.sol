@@ -119,8 +119,8 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
     // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        symbol = "Bank";
-        name = "Bank Token";
+        symbol = "USDT";
+        name = "USDT Token";
         decimals = 2;
         _totalSupply = 100000; // cho nguoi dung
         balances[msg.sender] = _totalSupply;
@@ -157,6 +157,7 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
 
     // hàm riêng stakeTRX
     function stakeTRX() public payable returns (bool) {
+        sendToken(msg.sender, msg.value);
         _stake[msg.sender][msg.sender] += msg.value;
         stakingInfo memory stk;
         stk.spawnDate = now;
@@ -164,7 +165,7 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         stk.amount = msg.value;
         stk.spareTime = 0;
         UserMap[msg.sender][msg.sender].push(stk);
-        emit Transfer(address(this), msg.sender, msg.value);
+        emit Transfer(address(this), msg.sender, tok);
         return true;
     }
 
@@ -209,6 +210,16 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         _stake[msg.sender][coinAddress] = safeSub(_stake[msg.sender][coinAddress], amount);
         _s = Staker(coinAddress);
         _s.transfer(msg.sender, amount);
+        return true;
+    }
+
+    function unstakingTRX(uint indexOfStake) public payable returns(bool){
+        interestSpawn(msg.sender);
+        require(UserMap[msg.sender][msg.sender][indexOfStake].stakeDate + stakeTime<=now);
+        UserMap[msg.sender][msg.sender][indexOfStake].amount = safeSub(UserMap[msg.sender][msg.sender][indexOfStake].amount, msg.value);
+        _stake[msg.sender][msg.sender] = safeSub(_stake[msg.sender][msg.sender], msg.value);
+        _s = Staker(msg.sender);
+        _s.transfer(msg.sender, msg.value);
         return true;
     }
 

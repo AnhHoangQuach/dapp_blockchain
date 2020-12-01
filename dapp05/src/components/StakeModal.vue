@@ -68,13 +68,15 @@
                                     <li class="showTransaction-list-item" v-for="index in timesOfTransaction" :key="index">
                                         <div class="showTransaction-list-item-content">
                                             <span>Staked {{index}}: </span>
-                                            <span></span>
+                                            <span>{{eachStakeCoin[index-1]}}</span>
                                             <button
                                                 class="button_stakeCoin"
+                                                @click="withDrawCoin(dataReceive.address_coin, eachStakeCoin[index-1])"
                                             >WithDraw
                                             </button>
                                             <button
-                                                class="button_stakeCoin" 
+                                                class="button_stakeCoin"
+                                                @click="unStaking(dataReceive.address_coin, eachStakeCoin[index-1], index-1)"
                                             >Unstaking
                                             </button>
                                         </div>
@@ -102,7 +104,7 @@ export default {
     data: function() {
         return {
             addressUser: '',
-            trc20ContractAddress: 'TCUv4Lo5XQF8cpqLD7jx65F64fyuQC28X5',
+            trc20ContractAddress: 'TSFjrDXu8K5xF4bGLDydQw2d7YHn9CJ3Qx',
             balanceCoin: 0,
             balanceCoinAnother: 0,
             stakeSuccess: false,
@@ -112,7 +114,7 @@ export default {
             coinStaked: 0,
             timesOfTransaction: 0,
             withDrawFullTransaction: 0,
-            eachStakeCoin: 0,
+            eachStakeCoin: [],
         }
     },
     methods: {
@@ -136,11 +138,36 @@ export default {
             })
         },
 
-        async eachStake(addressCoin, test) {
+        async withDrawCoin(addressCoin, amount){
             let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
-            await contract.balanceOfEachStake(addressCoin, test).call()
+            await contract.withDraw(addressCoin, amount).send()
             .then(result => {
-                document.querySelector(".showTransaction-list-item-content span:nth-child(2)").innerHTML = parseInt(result._hex)
+                console.log(result);
+            })
+        },
+
+        async unStaking(addressCoin, amount, index){
+            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+            await contract.unstaking(addressCoin, amount * 100, index).send()
+            .then(result => {
+                console.log(result);
+                this.timesOfTransaction = this.timesOfTransaction - 1;
+                this.eachStakeCoin.splice(index, 1)
+            })
+        },
+
+
+        async eachStake(addressCoin, data) {
+            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+            await contract.balanceOfEachStake(addressCoin, data).call()
+            .then(result => {
+                var temp;
+                if(addressCoin == this.addressUser) {
+                    temp = parseInt(result._hex) / Math.pow(10,6);
+                } else {
+                    temp = parseInt(result._hex) / Math.pow(10,2);
+                }
+                this.eachStakeCoin.push(temp)
             })
         },
 
@@ -238,11 +265,18 @@ export default {
     },
     created() {
         this.takeAddress();
+        setTimeout(() => {
+            for(var i = 0; i < this.timesOfTransaction;i++) {
+                this.eachStake(this.dataReceive.address_coin, i);
+            }
+        }, 1500)
+    },
+    mounted() {
+        this.showEachStaked(this.dataReceive.address_coin);
     },
     updated() {
         this.stakedCoin(this.dataReceive.address_coin)
-        this.showEachStaked(this.dataReceive.address_coin)
-    }
+    },
 }
 </script>
 
@@ -252,7 +286,7 @@ export default {
         border-radius: 10px;
         line-height: 30px;
         font-family: HelveticaNeue;
-        font-size: 12px;
+        font-size: 10px;
         color: #fff;
         letter-spacing: 0;
         text-align: center;
@@ -279,6 +313,7 @@ export default {
 
     .showTransaction-list-item-content > span {
         padding: 0 5px;
+        font-size: 14px;
     }
 
     .claim__modal-action .modal-body-title {

@@ -41,7 +41,7 @@ export default {
             coins_data: {},
             stakedAddressCoin: 0,
             addressUser: '',
-            trc20ContractAddress: 'TSFjrDXu8K5xF4bGLDydQw2d7YHn9CJ3Qx',
+            trc20ContractAddress: 'TBdq79QWTYhetzzqCSFMd86pRc4uCfNjKQ',
         }
     },
     methods: {

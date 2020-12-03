@@ -119,8 +119,8 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
     // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        symbol = "USDT";
-        name = "USDT Token";
+        symbol = "Bank";
+        name = "Bank Token";
         decimals = 2;
         _totalSupply = 100000; // cho nguoi dung
         balances[msg.sender] = _totalSupply;
@@ -157,7 +157,6 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
 
     // hàm riêng stakeTRX
     function stakeTRX() public payable returns (bool) {
-        sendToken(msg.sender, msg.value);
         _stake[msg.sender][msg.sender] += msg.value;
         stakingInfo memory stk;
         stk.spawnDate = now;
@@ -165,7 +164,7 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         stk.amount = msg.value;
         stk.spareTime = 0;
         UserMap[msg.sender][msg.sender].push(stk);
-        emit Transfer(address(this), msg.sender, tok);
+        emit Transfer(address(this), msg.sender, msg.value);
         return true;
     }
 
@@ -213,16 +212,15 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         return true;
     }
 
-    function unstakingTRX(uint indexOfStake) public payable returns(bool){
+    function unstakingTRX(uint trxAmount, uint indexOfStake) public returns(bool){
         interestSpawn(msg.sender);
         require(UserMap[msg.sender][msg.sender][indexOfStake].stakeDate + stakeTime<=now);
-        UserMap[msg.sender][msg.sender][indexOfStake].amount = safeSub(UserMap[msg.sender][msg.sender][indexOfStake].amount, msg.value);
-        _stake[msg.sender][msg.sender] = safeSub(_stake[msg.sender][msg.sender], msg.value);
-        _s = Staker(msg.sender);
-        _s.transfer(msg.sender, msg.value);
+        UserMap[msg.sender][msg.sender][indexOfStake].amount = safeSub(UserMap[msg.sender][msg.sender][indexOfStake].amount, trxAmount);
+        _stake[msg.sender][msg.sender] = safeSub(_stake[msg.sender][msg.sender], trxAmount);
+        address payable seller = msg.sender; // ng nhan
+        seller.transfer(trxAmount);
         return true;
     }
-
     // ------------------------------------------------------------------------
     // Total supply
     // ------------------------------------------------------------------------

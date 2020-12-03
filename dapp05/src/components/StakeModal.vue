@@ -104,7 +104,7 @@ export default {
     data: function() {
         return {
             addressUser: '',
-            trc20ContractAddress: 'TSFjrDXu8K5xF4bGLDydQw2d7YHn9CJ3Qx',
+            trc20ContractAddress: 'TBdq79QWTYhetzzqCSFMd86pRc4uCfNjKQ',
             balanceCoin: 0,
             balanceCoinAnother: 0,
             stakeSuccess: false,
@@ -147,13 +147,19 @@ export default {
         },
 
         async unStaking(addressCoin, amount, index){
-            let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
-            await contract.unstaking(addressCoin, amount * 100, index).send()
-            .then(result => {
-                console.log(result);
-                this.timesOfTransaction = this.timesOfTransaction - 1;
-                this.eachStakeCoin.splice(index, 1)
-            })
+            if(addressCoin == this.addressUser) {
+                let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+                await contract.unstakingTRX(amount * Math.pow(10,6), index).send()
+                .then(result => {
+                    console.log(result);
+                })
+            } else {
+                let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
+                await contract.unstaking(addressCoin, amount * 100, index).send()
+                .then(result => {
+                    console.log(result);
+                })
+            }
         },
 
 

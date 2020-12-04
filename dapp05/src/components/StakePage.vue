@@ -41,7 +41,7 @@ export default {
             coins_data: {},
             stakedAddressCoin: 0,
             addressUser: '',
-            trc20ContractAddress: 'TBdq79QWTYhetzzqCSFMd86pRc4uCfNjKQ',
+            trc20ContractAddress: 'TKUKGu7k2MZorb7TygLJeQVMRJ2veaXLBV',
         }
     },
     methods: {
@@ -59,7 +59,7 @@ export default {
             await contract.balanceOfStake(addressCoin).call()
             .then(result => {
                 if(addressCoin === this.addressUser) {
-                    this.stakedAddressCoin = parseInt(result._hex) / Math.pow(10,6)
+                    this.stakedAddressCoin = parseInt(result._hex)
                 } else {
                     this.stakedAddressCoin = parseInt(result._hex) / Math.pow(10,2)
                 }

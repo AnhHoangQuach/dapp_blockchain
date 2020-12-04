@@ -104,7 +104,7 @@ export default {
     data: function() {
         return {
             addressUser: '',
-            trc20ContractAddress: 'TBdq79QWTYhetzzqCSFMd86pRc4uCfNjKQ',
+            trc20ContractAddress: 'TKUKGu7k2MZorb7TygLJeQVMRJ2veaXLBV',
             balanceCoin: 0,
             balanceCoinAnother: 0,
             stakeSuccess: false,
@@ -131,7 +131,7 @@ export default {
             await contract.balanceOfStake(addressCoin).call()
             .then(result => {
                 if(addressCoin === this.addressUser) {
-                    this.coinStaked = parseInt(result._hex) / Math.pow(10,6)
+                    this.coinStaked = parseInt(result._hex)
                 } else {
                     this.coinStaked = parseInt(result._hex) / Math.pow(10,2)
                 }
@@ -142,6 +142,7 @@ export default {
             let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
             await contract.withDraw(addressCoin, amount).send()
             .then(result => {
+                console.log(amount)
                 console.log(result);
             })
         },
@@ -149,7 +150,7 @@ export default {
         async unStaking(addressCoin, amount, index){
             if(addressCoin == this.addressUser) {
                 let contract = await window.tronWeb.contract().at(this.trc20ContractAddress);
-                await contract.unstakingTRX(amount * Math.pow(10,6), index).send()
+                await contract.unstakingTRX(amount, index).send()
                 .then(result => {
                     console.log(result);
                 })
@@ -169,7 +170,7 @@ export default {
             .then(result => {
                 var temp;
                 if(addressCoin == this.addressUser) {
-                    temp = parseInt(result._hex) / Math.pow(10,6);
+                    temp = parseInt(result._hex)
                 } else {
                     temp = parseInt(result._hex) / Math.pow(10,2);
                 }

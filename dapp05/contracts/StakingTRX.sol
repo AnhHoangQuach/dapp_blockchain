@@ -157,11 +157,11 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
 
     // hàm riêng stakeTRX
     function stakeTRX() public payable returns (bool) {
-        _stake[msg.sender][msg.sender] += msg.value;
+        _stake[msg.sender][msg.sender] += msg.value / 10**6;
         stakingInfo memory stk;
         stk.spawnDate = now;
         stk.stakeDate  = now;
-        stk.amount = msg.value;
+        stk.amount = msg.value / 10**6;
         stk.spareTime = 0;
         UserMap[msg.sender][msg.sender].push(stk);
         emit Transfer(address(this), msg.sender, msg.value);
@@ -218,7 +218,8 @@ contract BankToken is ERC20Interface, Owned, SafeMath {
         UserMap[msg.sender][msg.sender][indexOfStake].amount = safeSub(UserMap[msg.sender][msg.sender][indexOfStake].amount, trxAmount);
         _stake[msg.sender][msg.sender] = safeSub(_stake[msg.sender][msg.sender], trxAmount);
         address payable seller = msg.sender; // ng nhan
-        seller.transfer(trxAmount);
+        seller.transfer(10**6*trxAmount);
+        emit Transfer(msg.sender, address(this), trxAmount);
         return true;
     }
     // ------------------------------------------------------------------------

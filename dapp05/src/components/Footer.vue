@@ -44,6 +44,7 @@ export default {
         margin: 0 2rem;
         text-decoration: none;
         position: relative;
+        padding: 10px 0;
     }
 
     .footer-contact a:hover {
@@ -56,7 +57,7 @@ export default {
 
     .footer-contact a:last-child:hover .footer-contact__qrCode {
         position: absolute;
-        top: -135px;
+        top: -120px;
         left: -35px;
         display: block;
         z-index: 10;
